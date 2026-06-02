@@ -33,3 +33,9 @@ MTU -----------------------------> PLC --------------> does something
    
 8. PLC sends information back to MTU
 9. MTU verifies information signature
+
+
+### TODO
+* basic docker setup (hello world)
+* SCADA hello world (get MTU to tell plc to print hello world to console)
+* 
