@@ -2,23 +2,23 @@ version: "3.7"
 
 services:
   #MTU / HMI server
-  node-red:
-    image: nodered/node-red:latest
-    environment:
-      - TZ=EUROPE/London
-    ports:
-      - "1880:1880"
-    networks:
-      - SCADA-system
-    volumes:
-      - node-red-data:/data
+#  node-red:
+#    image: nodered/node-red:latest
+#    environment:
+#      - TZ=EUROPE/London
+#    ports:
+#      - "1880:1880"
+#    networks:
+#      - SCADA-system
+#    volumes:
+#      - node-red-data:/data
 
-  # need to add RTU / PLC elements
+  # RTU / PLC elements
 
 
 
 volumes:
-  node-red-data:
+  #node-red-data:
 
 networks:
   SCADA-system:
