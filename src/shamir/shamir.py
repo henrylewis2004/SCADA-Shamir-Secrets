@@ -13,12 +13,13 @@ def create_share(coeffs, x, prime=PRIME):
 
     return share
 
+#creates a set of random coefficients in the form (secret + ci*X ... + cn*X^k-1)
 def create_coeffs(secret_int, k, prime=PRIME):
-    coeffs = [0] * k
-    coeffs[0] = secret_int
+    coeffs = []
+    coeffs.append(secret_int)
     for i in range(1,k):  
         #coeffs[i]=  secrets.randbelow(prime) #maybe add so it can't be zero
-        coeffs[i] = secrets.SystemRandom().randrange(2,prime)
+        coeffs.append(secrets.SystemRandom().randrange(2,prime))
 
         
     return coeffs
