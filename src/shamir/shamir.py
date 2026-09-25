@@ -56,11 +56,12 @@ def test():
     secret = 5
     n = 10
     k = 4
+
     shares = split_secret(secret,n,k)
     rec=recover_secret(shares[3:8])
+
     print(f"n: {n}\nk:{k}")
     print(f"secret: {secret}\n")
     print(f"recovered secret: {rec}")
 
 
-test()

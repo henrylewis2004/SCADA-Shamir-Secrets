@@ -3,17 +3,18 @@
 
 * Docker:
     * setup docker container
-        * node-red mtu      x
-        * RTU / PLC field device 
-    * create node-red flow 
+        * MTU / PLC field device 
+        * modbus communication
 
 * Shamir encoding
-    * create key
-    * create polynomial and hide key
+    * ~createint i = 0; i < DMA_CHANNEL_COUNT;; i++ key~
+    * ~create polynomial and hide key~
+    * ~key reconstruction~
     * distribute key
-    * sign instructions
+    * sign message
+    * request keys
 
 
 * Evaluation
-    * Python time package to time how long verification takes
+    * Python time package to time how long verification takes?
         * add time for key reconstruction and instruction signing 

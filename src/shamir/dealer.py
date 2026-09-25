@@ -4,6 +4,8 @@ import secrets
 
 import shamir  
 
+out_dir = './shares'
+
 def make_key():
     return secrets.token_bytes(32) # maybe look into why 32 bytes / 256 bits
 
@@ -12,7 +14,7 @@ def get_key_int(key):
 
 #writes each share to a file to send to shareholders
 #maybe change to send files (add a destination and send it from here)
-def make_files(shares,output_directory = "./shares"):
+def make_files(shares,output_directory = out_dir):
     os.makedirs(output_directory, exist_ok=True)
 
     for (x, y) in shares:
@@ -33,7 +35,7 @@ def deal(n,k,key=make_key()):
 
     print(f"\n{n} shares created with k = {k}\n")
 
-def get_shares(output_directory="./shares"):
+def get_shares(output_directory=out_dir):
     shares = []
     for f in os.scandir(output_directory):
         if f.is_file():
@@ -44,16 +46,14 @@ def get_shares(output_directory="./shares"):
     return shares
 
 
-def main():
+def test():
     n = 5
     k = 3
 
     deal(n,k)
     shares = get_shares()
-    #print(shamir.recover_secret(shares))
-    #print(shamir.recover_secret(shares).to_bytes(32,"big"))
 
+    print(shamir.recover_secret(shares))
+    print(shamir.recover_secret(shares).to_bytes(32,"big"))
 
-if __name__ == "__main__":
-    main()
 
