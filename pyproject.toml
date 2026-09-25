@@ -1,0 +1,7 @@
+[project]
+name = "SCADA Shamir Secret Sharing"
+version = "0.1.0"
+description = "A Python & Docker simulated SCADA system evaluating the application of Shamir's Secret Sharing for cryptographic key management"
+despendencies = [
+	"pycryptodome"
+]
