@@ -8,6 +8,8 @@ from Crypto.Cipher import AES #used by Adamako? Prevelent in scada systems?
 
 from shamir import recover_secret
 
+K_VALUE = 3
+
 #get shares
 def fetch_share(url, token, timeout=2.0):
     req = urlreq.Request(url, headers={"Authorization": f"Bearer {token}"})
@@ -16,17 +18,17 @@ def fetch_share(url, token, timeout=2.0):
         data = json.loads(response.read().decode())
         return (data["x"], data["y"])
 
-def collect_shares(shareholders, k, timeout=2.0):
-    # shareholders: list of {"url":..., "token":...}
+def collect_shares(shareholders, k=K_VALUE, timeout=2.0):
+    # shareholders: list of [(address, token)]
     shares = []
     with ThreadPoolExecutor(max_workers=len(shareholders)) as pool:
-        futures = {pool.submit(fetch_share, sh["url"], sh["token"], timeout): sh for sh in shareholders}
+        futures = {pool.submit(fetch_share, holder[0], holder[1], timeout): holder for holder in shareholders}
 
         for fut in as_completed(futures):
             try:
                 shares.append(fut.result())
             except Exception:
-                continue  # that shareholder failed/timed out — just skip it
+                continue  # shareholder failed/timed out 
             if len(shares) >= k:
                 break
 
@@ -41,19 +43,17 @@ def recover_key(shares):
     return recover_secret(shares).to_bytes(32, "big")
 
 #message
-def message(target, function, address, value, nonce, ts):
+def message(target, function, address, value, nonce, ts, encode=True):
     payload = {"target": target, "function": function, "address": address,"value": value, "nonce": nonce, "ts": ts}
 
-    return json.dumps(payload, sort_keys=True, separators=(",", ":")).encode()
+    if encode: return json.dumps(payload, sort_keys=True, separators=(",", ":")).encode()
+    else:      return json.dumps(payload, sort_keys=True, separators=(",", ":"))
 
 def new_nonce():
     return os.urandom(12).hex() #should use security random?
 
-def zeroize(key_bytes):
-    for i in range(len(key_bytes)):
-        key_bytes[i] = 0
-    return key_bytes
-
+def zeroise(key):
+    buf[:] = bytes(len(buf))
 
 #CMAC (Cipher-based Message Authentication Code) sign and verify messages
 def sign(key: bytes, message: bytes) -> str:

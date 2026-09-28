@@ -20,8 +20,8 @@ def make_files(shares,output_directory = out_dir):
     for (x, y) in shares:
         shareholder_token = secrets.token_hex(16)          
         filename = os.path.join(output_directory, f"shareholder_{x}.json")
-        with open(filename, "w") as f:
-            json.dump({"x": x, "y": y, "shareholder_token": shareholder_token}, f)
+        with open(filename, "w") as file:
+            json.dump({"x": x, "y": y, "shareholder_token": shareholder_token}, file)
 
         print(f"shareholder {x}: token={shareholder_token}")   # so you have a record of it
 

@@ -1,0 +1,122 @@
+import socket
+import threading
+import json
+import time
+import os
+
+from pymodbus.constants import ExcCodes 
+from pymodbus.simulator.simdata import SimData
+from pymodbus.simulator.simdevice import SimDevice
+from pymodbus.simulator.simutils import DataType
+from pymodbus.server import StartTcpServer
+
+import crypt 
+
+lock = threading.Lock() #maybe switch to asynclock
+seen_nonces = {}     # key: nonce -> value: expiry timestamp
+authorised = {}      # key: (address, value) -> value: expiry timestamp
+max_nonce_life = 5.0
+
+nodes=[] # (address, token)
+
+global node_name = os.environ.get("PLC_NAME")#"default_name"
+
+def set_node_name(name="default_name"):
+    node_name = name
+
+def fresh_check(nonce,ts):
+    if abs(time.time() - ts) > max_nonce_life: return False
+    return nonce not in seen_nonces
+
+def nonce_age_check():
+    for nonce  in list(seen_nonces):
+        if seen_nonces[nonce] < time.time():
+            del seen_nonces[nonce]
+    for index in list(authorised):
+        if authorised[index] < time.time():
+            del authorised[index]
+
+def authorise(msg_str, sig_hex):
+    payload = json.loads(msg_str)
+    address, value, nonce, ts, target = payload["address"], payload["value"], payload["nonce"], payload["ts"], payload["target"]
+
+    if target != node_name: return False
+
+    with lock:
+        nonce_age_check()
+        if not fresh_check(nonce,ts): return False
+        seen_nonces[nonce] = time.time()+max_nonce_life
+
+    try:
+        shares = crypt.collect_shares(nodes)
+        key = bytearray(crypt.recover_key(shares)) #maybe look at collecting own share first
+        ok = crypt.verify(bytes(key), msg_str.encode(), sig_hex)
+    except Exception as e:
+        print(f"send command hex generation failure, exception: {e}")
+    finally:
+        crypt.zeroise(key)
+
+    if not ok:
+        return False
+
+    with lock:
+        authorised[(address,value)] = time.time()+max_nonce_life
+    return True
+
+def serve_one(connection):
+    with connection:
+        data = b""
+        connection.settimeout(5.0)
+        while not data.endswith(b"\n"):
+            try:
+                chunk = connection.recv(4096)
+                if not chunk:
+                    break
+                data += chunk
+            except Exception as e:
+                print("control channel data connection timeout error:", e)
+        try:
+            payload = json.loads(data.decode())
+            ok = authorise(payload["msg"], payload["sig"])
+        except Exception as e:
+            print("control channel error:", e)
+            ok = False
+        connection.sendall(b"AUTHORIZED" if ok else b"DENIED")
+
+def control_channel_server(port,addr="0.0.0.0"):
+    srv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    srv.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    srv.bind((addr, port))
+    srv.listen(16)
+    print(f"control channel listening on :{port}")
+    while True:
+        connection, _ = srv.accept()
+        threading.Thread(target=serve_one, args=(connection,), daemon=True).start()
+
+
+async def gate_action(function_code, start_address, address, count, current_registers, set_values):
+    if set_values == None: return None
+
+    value = set_values[0] if len(set_values)==1 else tuple(set_values)
+
+    with lock:
+        if (address, value) not in authorised or authorised[(address,value)] < time.time():
+            print(f"address: {address}, value: {value}. not authorised")
+            return ExcCodes.NEGATIVE_ACKNOWLEDGE
+        del authorised[(address,value)]
+
+    print(f"address: {address}, value: {value}. applied")
+    return None
+
+def start_modbus_server(addr, port):
+    hr_block = SimData(0, count=100, values=0, datatype=DataType.REGISTERS)
+    device = SimDevice(id=1, simdata=[hr_block], action=gate_action)
+    print(f"Modbus TCP server listening on :{port}")
+    StartTcpServer(context=device, address=(addr, port))
+
+
+if __name__ == "__main__":
+    threading.Thread(target=control_channel_server, args=(6000,), daemon=True).start()
+    start_modbus_server("0.0.0.0",5020)
+
+
