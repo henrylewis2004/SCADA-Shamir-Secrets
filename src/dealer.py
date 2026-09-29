@@ -5,6 +5,8 @@ import secrets
 import shamir  
 
 out_dir = './shares'
+node_list_dir = os.path.join(out_dir,"shareholders")
+shares_dir = os.path.join(out_dir,"share_files")
 
 def make_key():
     return secrets.token_bytes(32) # maybe look into why 32 bytes / 256 bits

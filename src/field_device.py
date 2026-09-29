@@ -11,15 +11,16 @@ from pymodbus.simulator.simutils import DataType
 from pymodbus.server import StartTcpServer
 
 import crypt 
+import nodes
 
 lock = threading.Lock() #maybe switch to asynclock
 seen_nonces = {}     # key: nonce -> value: expiry timestamp
 authorised = {}      # key: (address, value) -> value: expiry timestamp
 max_nonce_life = 5.0
 
-nodes=[] # (address, token)
+nodes_shareholders = nodes.load_nodes 
 
-global node_name = os.environ.get("PLC_NAME")#"default_name"
+global node_name = os.environ.get("NODE_NAME")
 
 def set_node_name(name="default_name"):
     node_name = name
@@ -47,14 +48,16 @@ def authorise(msg_str, sig_hex):
         if not fresh_check(nonce,ts): return False
         seen_nonces[nonce] = time.time()+max_nonce_life
 
+    key = None
     try:
-        shares = crypt.collect_shares(nodes)
+        shares = crypt.collect_shares(nodes_shareholders)
         key = bytearray(crypt.recover_key(shares)) #maybe look at collecting own share first
         ok = crypt.verify(bytes(key), msg_str.encode(), sig_hex)
     except Exception as e:
         print(f"send command hex generation failure, exception: {e}")
     finally:
-        crypt.zeroise(key)
+        if key not None:
+            crypt.zeroise(key)
 
     if not ok:
         return False

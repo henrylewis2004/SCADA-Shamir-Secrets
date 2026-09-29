@@ -2,42 +2,47 @@ import json
 import os
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
-from dealer import out_dir
+from dealer import shares_dir
 
 port_addr = 7000
 ip_addr = "0.0.0.0"
 
-def read_share(token,directory = out_dir):
-    for f in os.scandir(directory):
-        if f.is_file():
-            with open(f.path,"r") as file:
-                s = json.load(file)
-                if s["shareholder_token"]==token:
-                    return (s["x"],s["y"])
+global share_x = None
+global share_y = None
+global share_token = None
 
-    return False
+read_share()
 
-def send_share(share, self):
-        self.send_response(uint) #request ok
+def read_share():
+    with open(os.environ.get(shares_dir,"share.json")) as file:
+        share = json.load(file)
+
+        share_x = share["x"]
+        share_y = share["y"]
+        share_token = share["shareholder_token"]
+
+def send_share(self):
+        self.send_response(200) #request ok
 
         self.send_header("Content-Type", "application/json")
         self.end_headers()
 
-        response = json.dumps({"x": share["x"], "y": share["y"]}).encode()
+        response = json.dumps({"x": share_x, "y": share_y).encode()
         self.wfile.write(response)
 
 class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path != out_dir:
             self.send_response(404) #not found error
+            self.end_headers()
             return
 
-        share = read_share(self.headers.get("Authorisation"))
-        if share == True:
-            send_share(share,self)
+        if self.headers.get("Authorization") == f"Bearer {share_token}"
+            send_share(self)
             return
 
         self.send_response(401) #unauthorised error
+            self.end_headers()
 
 
 def main():

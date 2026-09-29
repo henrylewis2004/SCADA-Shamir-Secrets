@@ -1,8 +1,0 @@
-Metadata-Version: 2.4
-Name: SCADA-Shamir-Secret-Sharing
-Version: 0.1.0
-Summary: A Python & Docker simulated SCADA system evaluating the application of Shamir's Secret Sharing for cryptographic key management
-License-File: LICENSE
-Requires-Dist: pycryptodome
-Requires-Dist: pymodbus
-Dynamic: license-file

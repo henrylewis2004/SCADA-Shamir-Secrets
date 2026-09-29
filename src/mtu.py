@@ -5,24 +5,27 @@ import time
 from pymodbus.client import ModbusTcpClient
 
 import crypt 
+import nodes
 
-nodes = []  #same roster-loading gap as plc.py 
+nodes_shareholders = nodes.load_nodes()
 
 #note need to get list of plcs target names
 def send_authorise(target, host, control_port, address, value, timeout=5.0):
     msg = crypt.message(target,"write_register",address,value,crypt.new_nonce(),time.time(),encode=False)
 
+    key = None
     try:
         shares = crypt.collect_shares(nodes)
         key = bytearray(crypt.recover_key(shares)) #maybe look at collecting own share first
-        sig_hex = crypt.sign(key, msg)
+        sig_hex = crypt.sign(key, msg.encode())
 
     except Exception as e:
         print(f"send authorise key & hex generation failure, exception: {e}")
         return False
 
     finally:
-        crypt.zeroise(key)
+        if key not None:
+            crypt.zeroise(key)
 
     payload = json.dumps({"msg": msg, "sig": sig_hex}).encode() + b"\n"
 
