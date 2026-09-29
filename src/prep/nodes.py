@@ -1,10 +1,10 @@
 import json
 import os
 
-from dealer import  node_list_dir, shares_dir
- 
+#from dealer import out_dir, shares_dir
+#node_list_dir = os.path.join(out_dir,"shareholders")
 
-def build_nodes(n, shareholder_dir=shares_default_dir, port=7000):
+def build_nodes(n, shareholder_dir, port):
     nodes = []
 
     for x in range(1, n + 1):
@@ -14,12 +14,12 @@ def build_nodes(n, shareholder_dir=shares_default_dir, port=7000):
             data = json.load(file)
 
         assert data["x"] == x, f"mismatch: file shareholder_{x}.json claims x={data['x']}"
-        nodes.append({"url": f"http://shareholder{x}:{port}/share","token": data["api_token"],})
+        nodes.append({"url": f"http://shareholder_{x}:{port}/share","token": data["shareholder_token"],})
 
     return nodes
 
-def make_node_file(n, output_dir=node_list_default_dir, shareholder_dir=shares_default_dir, port=7000):
-    nodes = build_nodes(shareholder_dir,n,port)
+def make_node_file(n, output_dir, shareholder_dir, port=7000):
+    nodes = build_nodes(n,shareholder_dir,port)
 
     os.makedirs(output_dir,exist_ok=True)
     filename = os.path.join(output_dir,"node_shareholder_list.json")
@@ -31,11 +31,8 @@ def make_node_file(n, output_dir=node_list_default_dir, shareholder_dir=shares_d
     print(f"node_shareholder_list.json populated at {filename}")
 
 
-def load_nodes(node_list_dir=node_list_default_dir,node_list_filename="node_shareholder_list.json"):
-    path = os.path.join(node_list_dir,node_list_filename)
-
+def load_nodes(path):
     with open(path) as file:
         return json.load(file)
-
 
     return nodes

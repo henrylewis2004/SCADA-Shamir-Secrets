@@ -2,7 +2,12 @@ import json
 import os
 import secrets
 
-import shamir  
+#import shamir
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "common"))
+from shamir import split_secret
 
 out_dir = './shares'
 node_list_dir = os.path.join(out_dir,"shareholders")
@@ -16,7 +21,7 @@ def get_key_int(key):
 
 #writes each share to a file to send to shareholders
 #maybe change to send files (add a destination and send it from here)
-def make_files(shares,output_directory = out_dir):
+def make_files(shares,output_directory):
     os.makedirs(output_directory, exist_ok=True)
 
     for (x, y) in shares:
@@ -29,11 +34,9 @@ def make_files(shares,output_directory = out_dir):
 
 
 #deals out shares 
-def deal(n,k,key=make_key()):
-    #print(key)
-    #print(get_key_int(key))
-    shares = shamir.split_secret(get_key_int(key),n,k)
-    make_files(shares)
+def deal(n,k,output_directory=shares_dir,key=make_key()):
+    shares = split_secret(get_key_int(key),n,k)
+    make_files(shares,output_directory)
 
     print(f"\n{n} shares created with k = {k}\n")
 

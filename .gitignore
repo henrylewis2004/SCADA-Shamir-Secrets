@@ -1,2 +1,3 @@
-/src/shares
+/shares/
+/src/SCADA_Shamir_Secret_Sharing.egg-info
 /venv/

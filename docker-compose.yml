@@ -1,0 +1,143 @@
+services:
+  mtu_1:
+    build:
+      context: .
+      dockerfile: src/mtu/Dockerfile
+    environment:
+      K_THRESHOLD: 3
+      N_COUNT: 5
+      MTU_NAME: mtu_1
+      NODE_LIST_PATH: /app/shares/shareholders/node_shareholder_list.json
+    volumes:
+    - ./shares/shareholders/node_shareholder_list.json:/app/shares/shareholders/node_shareholder_list.json:ro
+    networks:
+    - SCADA-system
+    depends_on:
+    - field_device_1
+    - field_device_2
+    - field_device_3
+  field_device_1:
+    build:
+      context: .
+      dockerfile: src/field_device/Dockerfile
+    environment:
+      K_THRESHOLD: 3
+      N_COUNT: 5
+      DEVICE_NAME: field_device_1
+      NODE_LIST_PATH: /app/shares/shareholders/node_shareholder_list.json
+    volumes:
+    - ./shares/shareholders/node_shareholder_list.json:/app/shares/shareholders/node_shareholder_list.json:ro
+    networks:
+    - SCADA-system
+    depends_on:
+    - shareholder_1
+    - shareholder_2
+    - shareholder_3
+    - shareholder_4
+    - shareholder_5
+  field_device_2:
+    build:
+      context: .
+      dockerfile: src/field_device/Dockerfile
+    environment:
+      K_THRESHOLD: 3
+      N_COUNT: 5
+      DEVICE_NAME: field_device_2
+      NODE_LIST_PATH: /app/shares/shareholders/node_shareholder_list.json
+    volumes:
+    - ./shares/shareholders/node_shareholder_list.json:/app/shares/shareholders/node_shareholder_list.json:ro
+    networks:
+    - SCADA-system
+    depends_on:
+    - shareholder_1
+    - shareholder_2
+    - shareholder_3
+    - shareholder_4
+    - shareholder_5
+  field_device_3:
+    build:
+      context: .
+      dockerfile: src/field_device/Dockerfile
+    environment:
+      K_THRESHOLD: 3
+      N_COUNT: 5
+      DEVICE_NAME: field_device_3
+      NODE_LIST_PATH: /app/shares/shareholders/node_shareholder_list.json
+    volumes:
+    - ./shares/shareholders/node_shareholder_list.json:/app/shares/shareholders/node_shareholder_list.json:ro
+    networks:
+    - SCADA-system
+    depends_on:
+    - shareholder_1
+    - shareholder_2
+    - shareholder_3
+    - shareholder_4
+    - shareholder_5
+  shareholder_1:
+    build:
+      context: .
+      dockerfile: src/shareholder/Dockerfile
+    environment:
+      PORT: '7000'
+      NODE_NAME: shareholder_1
+      SHARE_PATH: /app/shares/share_files/share.json
+      EXPORT_SHARE_PATH: /share
+    volumes:
+    - ./shares/share_files/shareholder_1.json:/app/shares/share_files/share.json:ro
+    networks:
+    - SCADA-system
+  shareholder_2:
+    build:
+      context: .
+      dockerfile: src/shareholder/Dockerfile
+    environment:
+      PORT: '7000'
+      NODE_NAME: shareholder_2
+      SHARE_PATH: /app/shares/share_files/share.json
+      EXPORT_SHARE_PATH: /share
+    volumes:
+    - ./shares/share_files/shareholder_2.json:/app/shares/share_files/share.json:ro
+    networks:
+    - SCADA-system
+  shareholder_3:
+    build:
+      context: .
+      dockerfile: src/shareholder/Dockerfile
+    environment:
+      PORT: '7000'
+      NODE_NAME: shareholder_3
+      SHARE_PATH: /app/shares/share_files/share.json
+      EXPORT_SHARE_PATH: /share
+    volumes:
+    - ./shares/share_files/shareholder_3.json:/app/shares/share_files/share.json:ro
+    networks:
+    - SCADA-system
+  shareholder_4:
+    build:
+      context: .
+      dockerfile: src/shareholder/Dockerfile
+    environment:
+      PORT: '7000'
+      NODE_NAME: shareholder_4
+      SHARE_PATH: /app/shares/share_files/share.json
+      EXPORT_SHARE_PATH: /share
+    volumes:
+    - ./shares/share_files/shareholder_4.json:/app/shares/share_files/share.json:ro
+    networks:
+    - SCADA-system
+  shareholder_5:
+    build:
+      context: .
+      dockerfile: src/shareholder/Dockerfile
+    environment:
+      PORT: '7000'
+      NODE_NAME: shareholder_5
+      SHARE_PATH: /app/shares/share_files/share.json
+      EXPORT_SHARE_PATH: /share
+    volumes:
+    - ./shares/share_files/shareholder_5.json:/app/shares/share_files/share.json:ro
+    networks:
+    - SCADA-system
+networks:
+  SCADA-system:
+    driver: bridge
