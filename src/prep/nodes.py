@@ -18,17 +18,34 @@ def build_nodes(n, shareholder_dir, port):
 
     return nodes
 
-def make_node_file(n, output_dir, shareholder_dir, port=7000):
+def make_node_file(n, output_dir, output_filename, shareholder_dir, port=7000):
     nodes = build_nodes(n,shareholder_dir,port)
 
     os.makedirs(output_dir,exist_ok=True)
-    filename = os.path.join(output_dir,"node_shareholder_list.json")
+    filename = os.path.join(output_dir,output_filename)
+
+    print(filename)
 
     with open(filename, "w") as file:
         json.dump(nodes, file, indent=2)
 
 
-    print(f"node_shareholder_list.json populated at {filename}")
+    print(f"shareholder list populated at {filename}")
+
+def make_field_device_file(count, output_dir, output_filename, control_port, modbus_port, name_format="field_device_"):
+    devices = {}
+    
+    for i in range(1,count+1):
+        devices[name_format+str(i)] = {"host":name_format+str(i), "control_port": control_port, "modbus_port": modbus_port}
+
+    os.makedirs(output_dir,exist_ok=True)
+    filename = os.path.join(output_dir,output_filename)
+
+    with open(filename, "w") as file:
+        json.dump(devices, file, indent=2)
+
+
+    print(f"field devices list populated at {filename}")
 
 
 def load_nodes(path):
@@ -36,3 +53,4 @@ def load_nodes(path):
         return json.load(file)
 
     return nodes
+

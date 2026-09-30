@@ -21,6 +21,9 @@ max_nonce_life = 5.0
 nodes = load_nodes(os.environ.get("NODE_LIST_PATH"))
 
 node_name = os.environ.get("DEVICE_NAME")
+ip_addr = os.environ.get("IP_ADDRESS")
+control_port = int(os.environ.get("CONTROL_PORT"))
+modbus_port = int(os.environ.get("MODBUS_PORT"))
 
 def set_node_name(name="default_name"):
     global node_name
@@ -87,7 +90,7 @@ def serve_one(connection):
             ok = False
         connection.sendall(b"AUTHORIZED" if ok else b"DENIED")
 
-def control_channel_server(port,addr="0.0.0.0"):
+def control_channel_server(addr,port):
     srv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     srv.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     srv.bind((addr, port))
@@ -99,6 +102,9 @@ def control_channel_server(port,addr="0.0.0.0"):
 
 
 async def gate_action(function_code, start_address, address, count, current_registers, set_values):
+    print(f"gate action : function_code={function_code}, start_address={start_address}, address={address}, count={count}, set_values={set_values}, current_registers={current_registers}",flush=True)
+    print(f"gate action set values: {set_values}",flush=True)
+
     if set_values == None: return None
 
     value = set_values[0] if len(set_values)==1 else tuple(set_values)
@@ -120,7 +126,7 @@ def start_modbus_server(addr, port):
 
 
 if __name__ == "__main__":
-    threading.Thread(target=control_channel_server, args=(6000,), daemon=True).start()
-    start_modbus_server("0.0.0.0",5020)
+    threading.Thread(target=control_channel_server, args=(ip_addr,control_port), daemon=True).start()
+    start_modbus_server(ip_addr,modbus_port)
 
 

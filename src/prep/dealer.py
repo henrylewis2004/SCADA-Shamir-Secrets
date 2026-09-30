@@ -38,7 +38,9 @@ def deal(n,k,output_directory=shares_dir,key=make_key()):
     shares = split_secret(get_key_int(key),n,k)
     make_files(shares,output_directory)
 
-    print(f"\n{n} shares created with k = {k}\n")
+    #for debugging and tests
+    print(f"\n{n} shares created with k = {k}")
+    print(f"key = {get_key_int(key)}, bytes = {key}\n")
 
 def get_shares(output_directory=out_dir):
     shares = []

@@ -21,7 +21,7 @@ class Handler(BaseHTTPRequestHandler):
             return
 
         if self.headers.get("Authorization") == f"Bearer {share_token}":
-            send_share(self)
+            self.send_share()
             return
 
         self.send_response(401) #unauthorised error
