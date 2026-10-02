@@ -32,6 +32,7 @@ def make_node_file(n, output_dir, output_filename, shareholder_dir, port=7000):
 
     print(f"shareholder list populated at {filename}")
 
+
 def make_field_device_file(count, output_dir, output_filename, control_port, modbus_port, name_format="field_device_"):
     devices = {}
     
@@ -46,6 +47,7 @@ def make_field_device_file(count, output_dir, output_filename, control_port, mod
 
 
     print(f"field devices list populated at {filename}")
+
 
 
 def load_nodes(path):

@@ -7,6 +7,7 @@ from pymodbus.client import ModbusTcpClient
 
 import crypt 
 from nodes import load_nodes
+import evaluation
 
 nodes = load_nodes(os.environ.get("NODE_LIST_PATH"))
 field_devices = load_nodes(os.environ.get("FIELD_DEVICE_LIST_PATH"))
@@ -55,38 +56,87 @@ def send_message(message, host, control_port, modbus_port, address, value, timeo
     client = ModbusTcpClient(host, port=modbus_port, timeout=timeout)
     client.connect()
     response = client.write_register(address, value, device_id=1)
-    print(response)
+    print(f"mtu send message response: {response}",flush=True)
     client.close()
 
     return not response.isError()
 
+def read_register_address(host, modbus_port, address, timeout=5.0):
+    client = ModbusTcpClient(host, port=modbus_port, timeout=timeout)
+    client.connect()
+
+    response = client.read_holding_registers(address, count=1, device_id=1).registers
+    print(f"{host} register {address} value: {response}",flush=True)
+    client.close()
+
+    return response
+
+
 ##
-def test_run():
+def test_run(trial_count=1,target=os.environ.get("TEST_TARGET")):
     print("\n\n---starting test run---\n")
 
-    target = os.environ.get("TEST_TARGET")
     host = field_devices[target]["host"]
-    control_port = field_devices[target]["control_port"] #int(os.environ.get("TEST_CONTROL_PORT", "6000"))
-    modbus_port = field_devices[target]["modbus_port"] #int(os.environ.get("TEST_MODBUS_PORT", "5020"))
-    address = 10
+    control_port = field_devices[target]["control_port"] 
+    modbus_port = field_devices[target]["modbus_port"] 
+    register_address = 10
     value = 42
 
-    print(f"--- 1) legitimate command: target={target} addr={address} value={value} ---")
-    msg = make_message(target, "write_register", address, value)
-    ok = send_message(msg, host, control_port, modbus_port, address, value)
-    print(f"result: {ok}\n",flush=True)
+    trial_res = {}
 
-    print(f"--- 2) wrong target (should be rejected) ---")
-    msg = make_message("not_a_real_plc", "write_register", address, value)
-    ok = send_message(msg, host, control_port, modbus_port, address, value)
-    print(f"result: {ok}\n",flush=True)
+    res = []
+    for i in range(0, trial_count):
 
-    print(f"--- 3) mismatched address/value between signed message and actual write (should be rejected) ---")
-    msg = make_message(target, "write_register", address, value)
-    ok = send_message(msg, host, control_port, modbus_port, address, 9999)  # different value than what was signed
-    print(f"result: {ok}\n",flush=True)
+        test_name = "legitimate_command"
+        print(f"--- 1) {test_name}: target={target} addr={register_address} value={value} ---")
+        end_time = time.time()
+        msg = make_message(target, "write_register", register_address, value)
+        ok = send_message(msg, host, control_port, modbus_port, register_address, value)
+        end_time = time.time() - end_time
+        response_value = read_register_address(host, modbus_port,register_address)
+        print(f"result: {ok}, value_change_correct: {response_value[0]==value}, time: {end_time} s\n",flush=True)
+        
+        res.append({"correct_result": ok==True, "value_change_correct":response_value[0]==value ,"time": end_time})
+
+    trial_res[test_name]=res
+
+    res=[]
+    value = 24
+    for i in range(0, trial_count):
+        test_name = "wrong_target"
+        print(f"--- 2) {test_name} (should be rejected) ---")
+        initial_value = read_register_address(host, modbus_port,register_address)
+        end_time = time.time()
+        msg = make_message("not_a_real_plc", "write_register", register_address, value)
+        ok = send_message(msg, host, control_port, modbus_port, register_address, value)
+        end_time = time.time() - end_time
+        final_value = read_register_address(host, modbus_port,register_address)
+        print(f"result: {ok}, value_change_correct: {initial_value==final_value}, time: {end_time} s\n",flush=True)
+
+        res.append({"correct_result": ok==False, "value_change_correct":final_value==initial_value,"time": end_time})
+
+    trial_res[test_name]=res
+
+    res=[]
+    value = 42
+    for i in range(0, trial_count):
+        test_name = "mismatched_values"
+        print(f"--- 3) {test_name} between signed message and actual write (should be rejected) ---")
+        initial_value = read_register_address(host, modbus_port,register_address)
+        end_time = time.time()
+        msg = make_message(target, "write_register", register_address, value)
+        ok = send_message(msg, host, control_port, modbus_port, register_address, 9999)  # different value than what was signed
+        end_time = time.time() - end_time
+        final_value = read_register_address(host, modbus_port,register_address)
+        print(f"result: {ok}, value_change_correct: {initial_value==final_value}, time: {end_time} s\n",flush=True)
+
+        res.append({"correct_result": ok==False, "value_change_correct":final_value==initial_value, "time": end_time})
+
+    trial_res[test_name]=res
+
+    evaluation.mtu_test_run(trial_res)
 
 
 if __name__ == "__main__":
-    test_run()
+    test_run(int(os.environ.get("TRIAL_COUNT")))
 

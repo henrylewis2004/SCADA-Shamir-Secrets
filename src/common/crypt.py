@@ -2,6 +2,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import urllib.request as urlreq
 import json
 import os
+import time
 
 from Crypto.Hash import CMAC
 from Crypto.Cipher import AES #used by Adamako? Prevelent in scada systems?
@@ -12,7 +13,7 @@ K_VALUE = 3
 
 #get shares
 def fetch_share(url, token, timeout=2.0):
-    print(f"fetch_share: GET {url}, with token = {token}")
+    #print(f"fetch_share: GET {url}, with token = {token}")
     req = urlreq.Request(url, headers={"Authorization": f"Bearer {token}"})
 
     with urlreq.urlopen(req, timeout=timeout) as response:
@@ -20,6 +21,7 @@ def fetch_share(url, token, timeout=2.0):
         return (data["x"], data["y"])
 
 def collect_shares(shareholders, k=K_VALUE, timeout=2.0):
+    time_collect_shares = time.time()
     # shareholders: list of [(address, token)]
     if not shareholders:
         raise ValueError("collect_shares: no shareholders provided")
@@ -45,6 +47,8 @@ def collect_shares(shareholders, k=K_VALUE, timeout=2.0):
     if len(shares) < k:
         raise Exception(f"only got {len(shares)}/{k} shares")
 
+    time_collect_shares = time.time() - time_collect_shares
+    print(f"time to collect shares: {time_collect_shares} s")
     return shares[:k]
 
 

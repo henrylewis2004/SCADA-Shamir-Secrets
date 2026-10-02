@@ -42,6 +42,7 @@ def nonce_age_check():
             del authorised[index]
 
 def authorise(msg_str, sig_hex):
+    time_authorise = time.time()
     payload = json.loads(msg_str)
     address, value, nonce, ts, target = payload["address"], payload["value"], payload["nonce"], payload["ts"], payload["target"]
 
@@ -68,6 +69,9 @@ def authorise(msg_str, sig_hex):
 
     with lock:
         authorised[(address,value)] = time.time()+max_nonce_life
+    
+    time_authorise = time.time() - time_authorise
+    print(f"time to authorise: {time_authorise} s", flush=True)
     return True
 
 def serve_one(connection):
@@ -95,17 +99,15 @@ def control_channel_server(addr,port):
     srv.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     srv.bind((addr, port))
     srv.listen(16)
-    print(f"control channel listening on :{port}")
+    print(f"control channel listening on :{port}", flush=True)
     while True:
         connection, _ = srv.accept()
         threading.Thread(target=serve_one, args=(connection,), daemon=True).start()
 
 
 async def gate_action(function_code, start_address, address, count, current_registers, set_values):
-    print(f"gate action : function_code={function_code}, start_address={start_address}, address={address}, count={count}, set_values={set_values}, current_registers={current_registers}",flush=True)
-    print(f"gate action set values: {set_values}",flush=True)
-
-    if set_values == None: return None
+ #   time_gate_action = time.time()
+    if set_values == None: return None #allows read instructions
 
     value = set_values[0] if len(set_values)==1 else tuple(set_values)
 
@@ -115,13 +117,14 @@ async def gate_action(function_code, start_address, address, count, current_regi
             return ExcCodes.NEGATIVE_ACKNOWLEDGE
         del authorised[(address,value)]
 
-    print(f"address: {address}, value: {value}. applied")
+ #   time_gate_action = time.time() - time_gate_action
+ #   print(f"address: {address}, value: {value}. applied, time: {time_gate_action} s", flush=True)
     return None
 
 def start_modbus_server(addr, port):
     hr_block = SimData(0, count=100, values=0, datatype=DataType.REGISTERS)
     device = SimDevice(id=1, simdata=[hr_block], action=gate_action)
-    print(f"Modbus TCP server listening on :{port}")
+    print(f"Modbus TCP server listening on :{port}",flush=True)
     StartTcpServer(context=device, address=(addr, port))
 
 

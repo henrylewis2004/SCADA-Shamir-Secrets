@@ -59,9 +59,7 @@ def make_docker_compose(mtu_count=MTU_COUNT, field_device_count=FIELD_DEVICE_COU
                     "FIELD_DEVICE_COUNT": FIELD_DEVICE_COUNT,
                     ##test variables
                     "TEST_TARGET": "field_device_1",
-                    #"TEST_HOST": "field_device_1",
-                    "TEST_CONTROL_PORT": FIELD_DEVICES_CONTROL_PORT,
-                    "TEST_MODBUS_PORT": FIELD_DEVICES_MODBUS_PORT,
+                    "TRIAL_COUNT": "3"
                     },
                 "volumes": [f"{real_node_list_path}:{NODE_LIST_PATH}:ro",f"{real_device_list_path}:{FIELD_DEVICE_LIST_PATH}:ro"],
                 "networks": ["SCADA-system"],

@@ -11,8 +11,7 @@ services:
       FIELD_DEVICE_LIST_PATH: /app/config/field_devices.json
       FIELD_DEVICE_COUNT: 3
       TEST_TARGET: field_device_1
-      TEST_CONTROL_PORT: 6000
-      TEST_MODBUS_PORT: 5020
+      TRIAL_COUNT: '3'
     volumes:
     - ./config/shareholders/node_shareholder_list.json:/app/config/node_shareholder_list.json:ro
     - ./config/field_devices/field_device_list.json:/app/config/field_devices.json:ro
