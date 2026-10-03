@@ -19,6 +19,7 @@ authorised = {}      # key: (address, value) -> value: expiry timestamp
 max_nonce_life = 5.0
 
 nodes = load_nodes(os.environ.get("NODE_LIST_PATH"))
+k = int(os.environ.get("K_THRESHOLD"))
 
 node_name = os.environ.get("DEVICE_NAME")
 ip_addr = os.environ.get("IP_ADDRESS")
@@ -55,7 +56,7 @@ def authorise(msg_str, sig_hex):
 
     key = None
     try:
-        shares = crypt.collect_shares(nodes)
+        shares = crypt.collect_shares(nodes,k)
         key = bytearray(crypt.recover_key(shares)) #maybe look at collecting own share first
         ok = crypt.verify(bytes(key), msg_str.encode(), sig_hex)
     except Exception as e:

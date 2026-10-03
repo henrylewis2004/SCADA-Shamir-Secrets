@@ -1,9 +1,6 @@
 import json
 import os
 
-#from dealer import out_dir, shares_dir
-#node_list_dir = os.path.join(out_dir,"shareholders")
-
 def build_nodes(n, shareholder_dir, port):
     nodes = []
 
@@ -23,8 +20,6 @@ def make_node_file(n, output_dir, output_filename, shareholder_dir, port=7000):
 
     os.makedirs(output_dir,exist_ok=True)
     filename = os.path.join(output_dir,output_filename)
-
-    print(filename)
 
     with open(filename, "w") as file:
         json.dump(nodes, file, indent=2)

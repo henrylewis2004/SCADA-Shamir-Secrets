@@ -1,0 +1,21 @@
+--- stage timing averages (ms) ---
+stage,avg_ms
+make_message,0.06775856018066406
+total_auth_time,18.94679069519043
+auth_time,9.629535675048828
+zeroise_time,0.003814697265625
+share_collect_time,8.497953414916992
+key_construction,0.05011558532714844
+message_signature_time,0.7290363311767578
+share_cost,9.28349494934082
+send_message,1.0567665100097656
+total_time,20.09110450744629
+
+--- scenario results ---
+scenario,count,avg_time_ms,correct_authorised_rate_%,register_value_change_rate_%
+legitimate_command,5,20.09110450744629,100.0,100.0
+replay_message,5,5.005025863647461,100.0,100.0
+wrong_target,5,6.796026229858398,100.0,100.0
+mismatched_values,5,12.953805923461914,100.0,100.0
+outdated_ts,5,6.161594390869141,100.0,100.0
+missing_shares,5,4.811859130859375,100.0,100.0

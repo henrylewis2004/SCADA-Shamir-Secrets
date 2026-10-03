@@ -15,6 +15,9 @@ NODE_LIST_PATH = "/app/config/node_shareholder_list.json"
 REAL_FIELD_DEVICE_LIST_PATH = "./config/field_devices/"
 REAL_FIELD_DEVICE_LIST_FILENAME = "field_device_list.json"
 FIELD_DEVICE_LIST_PATH = "/app/config/field_devices.json"
+
+CONTAINER_EVAL_DIR = "/app/eval/"
+REAL_EVAL_DIR = "./eval/"
     
 FIELD_DEVICES_CONTROL_PORT = 6000
 FIELD_DEVICES_MODBUS_PORT = 5020
@@ -59,9 +62,9 @@ def make_docker_compose(mtu_count=MTU_COUNT, field_device_count=FIELD_DEVICE_COU
                     "FIELD_DEVICE_COUNT": FIELD_DEVICE_COUNT,
                     ##test variables
                     "TEST_TARGET": "field_device_1",
-                    "TRIAL_COUNT": "3"
+                    "TRIAL_COUNT": "5"
                     },
-                "volumes": [f"{real_node_list_path}:{NODE_LIST_PATH}:ro",f"{real_device_list_path}:{FIELD_DEVICE_LIST_PATH}:ro"],
+                "volumes": [f"{real_node_list_path}:{NODE_LIST_PATH}:ro",f"{real_device_list_path}:{FIELD_DEVICE_LIST_PATH}:ro",f"{REAL_EVAL_DIR}:{CONTAINER_EVAL_DIR}"],
                 "networks": ["SCADA-system"],
                 "depends_on": mtu_dependencies(field_device_count)
                 }

@@ -11,10 +11,11 @@ services:
       FIELD_DEVICE_LIST_PATH: /app/config/field_devices.json
       FIELD_DEVICE_COUNT: 3
       TEST_TARGET: field_device_1
-      TRIAL_COUNT: '3'
+      TRIAL_COUNT: '5'
     volumes:
     - ./config/shareholders/node_shareholder_list.json:/app/config/node_shareholder_list.json:ro
     - ./config/field_devices/field_device_list.json:/app/config/field_devices.json:ro
+    - ./eval/:/app/eval/
     networks:
     - SCADA-system
     depends_on:

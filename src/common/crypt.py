@@ -9,8 +9,6 @@ from Crypto.Cipher import AES #used by Adamako? Prevelent in scada systems?
 
 from shamir import recover_secret
 
-K_VALUE = 3
-
 #get shares
 def fetch_share(url, token, timeout=2.0):
     #print(f"fetch_share: GET {url}, with token = {token}")
@@ -20,8 +18,7 @@ def fetch_share(url, token, timeout=2.0):
         data = json.loads(response.read().decode())
         return (data["x"], data["y"])
 
-def collect_shares(shareholders, k=K_VALUE, timeout=2.0):
-    time_collect_shares = time.time()
+def collect_shares(shareholders, k, timeout=2.0):
     # shareholders: list of [(address, token)]
     if not shareholders:
         raise ValueError("collect_shares: no shareholders provided")
@@ -47,8 +44,6 @@ def collect_shares(shareholders, k=K_VALUE, timeout=2.0):
     if len(shares) < k:
         raise Exception(f"only got {len(shares)}/{k} shares")
 
-    time_collect_shares = time.time() - time_collect_shares
-    print(f"time to collect shares: {time_collect_shares} s")
     return shares[:k]
 
 
