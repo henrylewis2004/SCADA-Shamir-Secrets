@@ -13,6 +13,7 @@ nodes = load_nodes(os.environ.get("NODE_LIST_PATH"))
 field_devices = load_nodes(os.environ.get("FIELD_DEVICE_LIST_PATH"))
 
 k = int(os.environ.get("K_THRESHOLD"))
+n = int(os.environ.get("N_COUNT"))
 
 def make_message(target,function,modbus_address,modbus_value,ts=time.time()):
     make_message_time = time.time()
@@ -236,7 +237,7 @@ def test_run(trial_count=1,target=os.environ.get("TEST_TARGET")):
 
     trial_res[test_name]=res
 
-    evaluation.mtu_test_run(auth_time_res,trial_res)
+    evaluation.mtu_test_run(auth_time_res,trial_res,k,n)
 
 
 if __name__ == "__main__":

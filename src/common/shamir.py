@@ -1,31 +1,27 @@
 # Shamir Secret Sharing - splits a secrete and creates shares to reconstruct secret
-
 import secrets
 
-PRIME = 2**521 - 1  # a Mersenne prime, comfortably bigger than a 256-bit secret
-mod = 10
+PRIME = 2**521 - 1  # 521 bit mersenne prime
 
 #computes a point on the polynomial with x, the share
 def create_share(coeffs, x, prime=PRIME):
     share = 0
-    for c in reversed(coeffs): #NOTE: uses horner's method, reference in dis?
+    for c in reversed(coeffs): #horner's method
         share = share * x + c
 
-    return share
+    return share % prime
 
 #creates a set of random coefficients in the form (secret + ci*X ... + cn*X^k-1)
 def create_coeffs(secret_int, k, prime=PRIME):
     coeffs = []
     coeffs.append(secret_int)
     for i in range(1,k):  
-        #coeffs[i]=  secrets.randbelow(prime) #maybe add so it can't be zero
-        coeffs.append(secrets.SystemRandom().randrange(2,prime))
+        coeffs.append(secrets.randbelow(prime))
 
         
     return coeffs
 
-
-#creates a list of shares (excludes x=0 as that would just be the secret)
+#creates a list of shares (excludes x=0 as that would be the secret)
 def split_secret(secret_int, n, k):
     share_list = []
     coeffs=create_coeffs(secret_int,k)
@@ -34,7 +30,6 @@ def split_secret(secret_int, n, k):
         share_list.append((i,create_share(coeffs, i)))
 
     return share_list
-
 
 def recover_secret(shares, prime=PRIME):
     secret = 0
@@ -51,7 +46,6 @@ def recover_secret(shares, prime=PRIME):
 
     return secret
 
-
 def test():
     secret = 5
     n = 10
@@ -65,3 +59,4 @@ def test():
     print(f"recovered secret: {rec}")
 
 
+test()

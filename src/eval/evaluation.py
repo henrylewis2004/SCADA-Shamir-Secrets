@@ -77,7 +77,7 @@ def mtu_test_evaluation_results(timeset,exclude_first=False):
     print()
     return results
 
-def export_csv(stage_avgs, results_summary,name="mtu_eval.csv", output_dir="/app/eval/"):
+def export_csv(stage_avgs, results_summary,k,n,name=f"mtu_eval_k{k}.csv", output_dir="/app/eval/"):
     os.makedirs(output_dir,exist_ok=True)
     filename = os.path.join(output_dir,name)
 
@@ -94,10 +94,10 @@ def export_csv(stage_avgs, results_summary,name="mtu_eval.csv", output_dir="/app
             w.writerow([scenario, s["cnt"], s["avg_time"], s["correct_authorised_rate"] * 100, s["correct_register_value_change"] * 100])
     print(f"wrote {filename}")
 
-def mtu_test_run(authorise_timeset,evaluation_results):
+def mtu_test_run(authorise_timeset,evaluation_results,k,n):
     authorise = mtu_authorise_time(authorise_timeset)
     evaluation = mtu_test_evaluation_results(evaluation_results)
-    export_csv(authorise,evaluation)
+    export_csv(authorise,evaluation,k,n)
 
     #excluding first
     authorise=mtu_authorise_time(authorise_timeset,True)
