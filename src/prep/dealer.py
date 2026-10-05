@@ -12,13 +12,15 @@ from shamir import split_secret
 node_list_dir = os.path.join(out_dir,"shareholders")
 shares_dir = os.path.join(out_dir,"share_files")
 
+#key functions
 def make_key():
     return secrets.token_bytes(32) 
 
+#to put into polynomial + debugging purposes
 def get_key_int(key):
     return int.from_bytes(key,'big')
 
-#writes each share to a file to send to shareholders
+#writes each share to a file to store on shareholders
 def make_files(shares,output_directory):
     os.makedirs(output_directory, exist_ok=True)
 
@@ -31,7 +33,7 @@ def make_files(shares,output_directory):
         print(f"shareholder {x}: token={shareholder_token}")   
 
 
-#deals out shares 
+#creates and deals out shares 
 def deal(n,k,output_directory=shares_dir,key=make_key()):
     shares = split_secret(get_key_int(key),n,k)
     make_files(shares,output_directory)
@@ -40,7 +42,7 @@ def deal(n,k,output_directory=shares_dir,key=make_key()):
     #print(f"\n{n} shares created with k = {k}")
     #print(f"key = {get_key_int(key)}, bytes = {key}\n")
 
-#debug / test function
+#debug / test functions
 def get_shares(output_directory=out_dir):
     shares = []
     for f in os.scandir(output_directory):
@@ -51,7 +53,6 @@ def get_shares(output_directory=out_dir):
 
     return shares
 
-
 def test():
     n = 5
     k = 3
@@ -61,5 +62,3 @@ def test():
 
     print(shamir.recover_secret(shares))
     print(shamir.recover_secret(shares).to_bytes(32,"big"))
-
-
