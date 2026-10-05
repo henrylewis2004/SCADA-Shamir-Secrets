@@ -9,7 +9,6 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "common"))
 from shamir import split_secret
 
-out_dir = './shares'
 node_list_dir = os.path.join(out_dir,"shareholders")
 shares_dir = os.path.join(out_dir,"share_files")
 
