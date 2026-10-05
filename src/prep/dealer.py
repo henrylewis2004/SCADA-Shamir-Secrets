@@ -31,7 +31,7 @@ def make_files(shares,output_directory):
 
 
 #creates and deals out shares 
-def deal(n,k,output_directory=shares_dir,key=make_key()):
+def deal(n,k,output_directory,key=make_key()):
     shares = split_secret(get_key_int(key),n,k)
     make_files(shares,output_directory)
 
@@ -40,7 +40,7 @@ def deal(n,k,output_directory=shares_dir,key=make_key()):
     #print(f"key = {get_key_int(key)}, bytes = {key}\n")
 
 #debug / test functions
-def get_shares(output_directory=out_dir):
+def get_shares(output_directory):
     shares = []
     for f in os.scandir(output_directory):
         if f.is_file():
