@@ -21,7 +21,7 @@ def create_coeffs(secret_int, k, prime=PRIME):
         
     return coeffs
 
-#creates a list of shares (excludes x=0 as that would be the secret)
+#creates a list of shares 
 def split_secret(secret_int, n, k):
     share_list = []
     coeffs=create_coeffs(secret_int,k)
@@ -31,6 +31,7 @@ def split_secret(secret_int, n, k):
 
     return share_list
 
+#Uses lagrange interpolation to recover secret
 def recover_secret(shares, prime=PRIME):
     secret = 0
     for share in shares:
