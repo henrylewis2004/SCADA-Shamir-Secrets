@@ -14,13 +14,12 @@ node_list_dir = os.path.join(out_dir,"shareholders")
 shares_dir = os.path.join(out_dir,"share_files")
 
 def make_key():
-    return secrets.token_bytes(32) # maybe look into why 32 bytes / 256 bits
+    return secrets.token_bytes(32) 
 
 def get_key_int(key):
     return int.from_bytes(key,'big')
 
 #writes each share to a file to send to shareholders
-#maybe change to send files (add a destination and send it from here)
 def make_files(shares,output_directory):
     os.makedirs(output_directory, exist_ok=True)
 
@@ -30,7 +29,7 @@ def make_files(shares,output_directory):
         with open(filename, "w") as file:
             json.dump({"x": x, "y": y, "shareholder_token": shareholder_token}, file)
 
-        print(f"shareholder {x}: token={shareholder_token}")   # so you have a record of it
+        print(f"shareholder {x}: token={shareholder_token}")   
 
 
 #deals out shares 
@@ -39,9 +38,10 @@ def deal(n,k,output_directory=shares_dir,key=make_key()):
     make_files(shares,output_directory)
 
     #for debugging and tests
-    print(f"\n{n} shares created with k = {k}")
-    print(f"key = {get_key_int(key)}, bytes = {key}\n")
+    #print(f"\n{n} shares created with k = {k}")
+    #print(f"key = {get_key_int(key)}, bytes = {key}\n")
 
+#debug / test function
 def get_shares(output_directory=out_dir):
     shares = []
     for f in os.scandir(output_directory):

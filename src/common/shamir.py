@@ -3,14 +3,6 @@ import secrets
 
 PRIME = 2**521 - 1  # 521 bit mersenne prime
 
-#computes a point on the polynomial with x, the share
-def create_share(coeffs, x, prime=PRIME):
-    share = 0
-    for c in reversed(coeffs): #horner's method
-        share = share * x + c
-
-    return share % prime
-
 #creates a set of random coefficients in the form (secret + ci*X ... + cn*X^k-1)
 def create_coeffs(secret_int, k, prime=PRIME):
     coeffs = []
@@ -20,6 +12,14 @@ def create_coeffs(secret_int, k, prime=PRIME):
 
         
     return coeffs
+
+#computes a point on the polynomial with x, the share
+def create_share(coeffs, x, prime=PRIME):
+    share = 0
+    for c in reversed(coeffs): #horner's method
+        share = share * x + c
+
+    return share % prime
 
 #creates a list of shares 
 def split_secret(secret_int, n, k):
