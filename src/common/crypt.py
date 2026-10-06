@@ -70,7 +70,7 @@ def sign(key: bytes, message: bytes) -> str:
     return msg_cmac.hexdigest()
 
 def verify(key: bytes, message: bytes, tag_hex: str) -> bool:
-    msg_cmac = CMAC.new(key,message,AES) #might have to reduce original key size down to 128 bits
+    msg_cmac = CMAC.new(key,message,AES) 
     try:
         msg_cmac.hexverify(tag_hex)
         return True

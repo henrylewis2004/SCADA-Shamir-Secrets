@@ -87,6 +87,19 @@ def send_message(message, host, control_port, modbus_port, address, value, timeo
     timeset["send_message"] =time.time() - end_time
     return not response.isError(), timeset
 
+def debug_send_message_no_authorisation(message, host, control_port, modbus_port, address, value, timeout=5.0, missing_share_count=0):
+    end_time=time.time()
+
+    client = ModbusTcpClient(host, port=modbus_port, timeout=timeout)
+    client.connect()
+    response = client.write_register(address, value, device_id=1)
+
+    #print(f"mtu send message response: {response}, time to send: {end_time*1000} ms",flush=True)
+    client.close()
+
+    timeset["send_message"] =time.time() - end_time
+    return not response.isError(), timeset
+
 def read_register_address(host, modbus_port, address, timeout=5.0):
     client = ModbusTcpClient(host, port=modbus_port, timeout=timeout)
     client.connect()
@@ -158,7 +171,7 @@ def test_run(trial_count=1,target=os.environ.get("TEST_TARGET")):
         initial_value = read_register_address(host, modbus_port,register_address)
         end_time = time.time()
 
-        ok,_ = send_message(msg, host, control_port, modbus_port, register_address, 9999)  # different value than what was signed
+        ok,_ = send_message(msg, host, control_port, modbus_port, register_address, value[i%2])  
         end_time = time.time() - end_time
         final_value = read_register_address(host, modbus_port,register_address)
 

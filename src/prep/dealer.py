@@ -11,7 +11,7 @@ from shamir import split_secret
 
 #key functions
 def make_key():
-    return secrets.token_bytes(32) 
+    return secrets.token_bytes(16) 
 
 #to put into polynomial + debugging purposes
 def get_key_int(key):
