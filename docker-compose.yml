@@ -4,14 +4,14 @@ services:
       context: .
       dockerfile: src/mtu/Dockerfile
     environment:
-      K_THRESHOLD: '3'
-      N_COUNT: '5'
+      K_THRESHOLD: '15'
+      N_COUNT: '30'
       MTU_NAME: mtu_1
       NODE_LIST_PATH: /app/config/node_shareholder_list.json
       FIELD_DEVICE_LIST_PATH: /app/config/field_devices.json
       FIELD_DEVICE_COUNT: 3
       TEST_TARGET: field_device_1
-      TRIAL_COUNT: '5'
+      TRIAL_COUNT: '10'
     volumes:
     - ./config/shareholders/node_shareholder_list.json:/app/config/node_shareholder_list.json:ro
     - ./config/field_devices/field_device_list.json:/app/config/field_devices.json:ro
@@ -27,8 +27,8 @@ services:
       context: .
       dockerfile: src/field_device/Dockerfile
     environment:
-      K_THRESHOLD: '3'
-      N_COUNT: '5'
+      K_THRESHOLD: '15'
+      N_COUNT: '30'
       DEVICE_NAME: field_device_1
       NODE_LIST_PATH: /app/config/node_shareholder_list.json
       IP_ADDRESS: 0.0.0.0
@@ -44,13 +44,38 @@ services:
     - shareholder_3
     - shareholder_4
     - shareholder_5
+    - shareholder_6
+    - shareholder_7
+    - shareholder_8
+    - shareholder_9
+    - shareholder_10
+    - shareholder_11
+    - shareholder_12
+    - shareholder_13
+    - shareholder_14
+    - shareholder_15
+    - shareholder_16
+    - shareholder_17
+    - shareholder_18
+    - shareholder_19
+    - shareholder_20
+    - shareholder_21
+    - shareholder_22
+    - shareholder_23
+    - shareholder_24
+    - shareholder_25
+    - shareholder_26
+    - shareholder_27
+    - shareholder_28
+    - shareholder_29
+    - shareholder_30
   field_device_2:
     build:
       context: .
       dockerfile: src/field_device/Dockerfile
     environment:
-      K_THRESHOLD: '3'
-      N_COUNT: '5'
+      K_THRESHOLD: '15'
+      N_COUNT: '30'
       DEVICE_NAME: field_device_2
       NODE_LIST_PATH: /app/config/node_shareholder_list.json
       IP_ADDRESS: 0.0.0.0
@@ -66,13 +91,38 @@ services:
     - shareholder_3
     - shareholder_4
     - shareholder_5
+    - shareholder_6
+    - shareholder_7
+    - shareholder_8
+    - shareholder_9
+    - shareholder_10
+    - shareholder_11
+    - shareholder_12
+    - shareholder_13
+    - shareholder_14
+    - shareholder_15
+    - shareholder_16
+    - shareholder_17
+    - shareholder_18
+    - shareholder_19
+    - shareholder_20
+    - shareholder_21
+    - shareholder_22
+    - shareholder_23
+    - shareholder_24
+    - shareholder_25
+    - shareholder_26
+    - shareholder_27
+    - shareholder_28
+    - shareholder_29
+    - shareholder_30
   field_device_3:
     build:
       context: .
       dockerfile: src/field_device/Dockerfile
     environment:
-      K_THRESHOLD: '3'
-      N_COUNT: '5'
+      K_THRESHOLD: '15'
+      N_COUNT: '30'
       DEVICE_NAME: field_device_3
       NODE_LIST_PATH: /app/config/node_shareholder_list.json
       IP_ADDRESS: 0.0.0.0
@@ -88,6 +138,31 @@ services:
     - shareholder_3
     - shareholder_4
     - shareholder_5
+    - shareholder_6
+    - shareholder_7
+    - shareholder_8
+    - shareholder_9
+    - shareholder_10
+    - shareholder_11
+    - shareholder_12
+    - shareholder_13
+    - shareholder_14
+    - shareholder_15
+    - shareholder_16
+    - shareholder_17
+    - shareholder_18
+    - shareholder_19
+    - shareholder_20
+    - shareholder_21
+    - shareholder_22
+    - shareholder_23
+    - shareholder_24
+    - shareholder_25
+    - shareholder_26
+    - shareholder_27
+    - shareholder_28
+    - shareholder_29
+    - shareholder_30
   shareholder_1:
     build:
       context: .
@@ -151,6 +226,331 @@ services:
       EXPORT_SHARE_PATH: /share
     volumes:
     - ./config/share_files/shareholder_5.json:/app/shares/share_files/share.json:ro
+    networks:
+    - SCADA-system
+  shareholder_6:
+    build:
+      context: .
+      dockerfile: src/shareholder/Dockerfile
+    environment:
+      PORT: '7000'
+      NODE_NAME: shareholder_6
+      SHARE_PATH: /app/shares/share_files/share.json
+      EXPORT_SHARE_PATH: /share
+    volumes:
+    - ./config/share_files/shareholder_6.json:/app/shares/share_files/share.json:ro
+    networks:
+    - SCADA-system
+  shareholder_7:
+    build:
+      context: .
+      dockerfile: src/shareholder/Dockerfile
+    environment:
+      PORT: '7000'
+      NODE_NAME: shareholder_7
+      SHARE_PATH: /app/shares/share_files/share.json
+      EXPORT_SHARE_PATH: /share
+    volumes:
+    - ./config/share_files/shareholder_7.json:/app/shares/share_files/share.json:ro
+    networks:
+    - SCADA-system
+  shareholder_8:
+    build:
+      context: .
+      dockerfile: src/shareholder/Dockerfile
+    environment:
+      PORT: '7000'
+      NODE_NAME: shareholder_8
+      SHARE_PATH: /app/shares/share_files/share.json
+      EXPORT_SHARE_PATH: /share
+    volumes:
+    - ./config/share_files/shareholder_8.json:/app/shares/share_files/share.json:ro
+    networks:
+    - SCADA-system
+  shareholder_9:
+    build:
+      context: .
+      dockerfile: src/shareholder/Dockerfile
+    environment:
+      PORT: '7000'
+      NODE_NAME: shareholder_9
+      SHARE_PATH: /app/shares/share_files/share.json
+      EXPORT_SHARE_PATH: /share
+    volumes:
+    - ./config/share_files/shareholder_9.json:/app/shares/share_files/share.json:ro
+    networks:
+    - SCADA-system
+  shareholder_10:
+    build:
+      context: .
+      dockerfile: src/shareholder/Dockerfile
+    environment:
+      PORT: '7000'
+      NODE_NAME: shareholder_10
+      SHARE_PATH: /app/shares/share_files/share.json
+      EXPORT_SHARE_PATH: /share
+    volumes:
+    - ./config/share_files/shareholder_10.json:/app/shares/share_files/share.json:ro
+    networks:
+    - SCADA-system
+  shareholder_11:
+    build:
+      context: .
+      dockerfile: src/shareholder/Dockerfile
+    environment:
+      PORT: '7000'
+      NODE_NAME: shareholder_11
+      SHARE_PATH: /app/shares/share_files/share.json
+      EXPORT_SHARE_PATH: /share
+    volumes:
+    - ./config/share_files/shareholder_11.json:/app/shares/share_files/share.json:ro
+    networks:
+    - SCADA-system
+  shareholder_12:
+    build:
+      context: .
+      dockerfile: src/shareholder/Dockerfile
+    environment:
+      PORT: '7000'
+      NODE_NAME: shareholder_12
+      SHARE_PATH: /app/shares/share_files/share.json
+      EXPORT_SHARE_PATH: /share
+    volumes:
+    - ./config/share_files/shareholder_12.json:/app/shares/share_files/share.json:ro
+    networks:
+    - SCADA-system
+  shareholder_13:
+    build:
+      context: .
+      dockerfile: src/shareholder/Dockerfile
+    environment:
+      PORT: '7000'
+      NODE_NAME: shareholder_13
+      SHARE_PATH: /app/shares/share_files/share.json
+      EXPORT_SHARE_PATH: /share
+    volumes:
+    - ./config/share_files/shareholder_13.json:/app/shares/share_files/share.json:ro
+    networks:
+    - SCADA-system
+  shareholder_14:
+    build:
+      context: .
+      dockerfile: src/shareholder/Dockerfile
+    environment:
+      PORT: '7000'
+      NODE_NAME: shareholder_14
+      SHARE_PATH: /app/shares/share_files/share.json
+      EXPORT_SHARE_PATH: /share
+    volumes:
+    - ./config/share_files/shareholder_14.json:/app/shares/share_files/share.json:ro
+    networks:
+    - SCADA-system
+  shareholder_15:
+    build:
+      context: .
+      dockerfile: src/shareholder/Dockerfile
+    environment:
+      PORT: '7000'
+      NODE_NAME: shareholder_15
+      SHARE_PATH: /app/shares/share_files/share.json
+      EXPORT_SHARE_PATH: /share
+    volumes:
+    - ./config/share_files/shareholder_15.json:/app/shares/share_files/share.json:ro
+    networks:
+    - SCADA-system
+  shareholder_16:
+    build:
+      context: .
+      dockerfile: src/shareholder/Dockerfile
+    environment:
+      PORT: '7000'
+      NODE_NAME: shareholder_16
+      SHARE_PATH: /app/shares/share_files/share.json
+      EXPORT_SHARE_PATH: /share
+    volumes:
+    - ./config/share_files/shareholder_16.json:/app/shares/share_files/share.json:ro
+    networks:
+    - SCADA-system
+  shareholder_17:
+    build:
+      context: .
+      dockerfile: src/shareholder/Dockerfile
+    environment:
+      PORT: '7000'
+      NODE_NAME: shareholder_17
+      SHARE_PATH: /app/shares/share_files/share.json
+      EXPORT_SHARE_PATH: /share
+    volumes:
+    - ./config/share_files/shareholder_17.json:/app/shares/share_files/share.json:ro
+    networks:
+    - SCADA-system
+  shareholder_18:
+    build:
+      context: .
+      dockerfile: src/shareholder/Dockerfile
+    environment:
+      PORT: '7000'
+      NODE_NAME: shareholder_18
+      SHARE_PATH: /app/shares/share_files/share.json
+      EXPORT_SHARE_PATH: /share
+    volumes:
+    - ./config/share_files/shareholder_18.json:/app/shares/share_files/share.json:ro
+    networks:
+    - SCADA-system
+  shareholder_19:
+    build:
+      context: .
+      dockerfile: src/shareholder/Dockerfile
+    environment:
+      PORT: '7000'
+      NODE_NAME: shareholder_19
+      SHARE_PATH: /app/shares/share_files/share.json
+      EXPORT_SHARE_PATH: /share
+    volumes:
+    - ./config/share_files/shareholder_19.json:/app/shares/share_files/share.json:ro
+    networks:
+    - SCADA-system
+  shareholder_20:
+    build:
+      context: .
+      dockerfile: src/shareholder/Dockerfile
+    environment:
+      PORT: '7000'
+      NODE_NAME: shareholder_20
+      SHARE_PATH: /app/shares/share_files/share.json
+      EXPORT_SHARE_PATH: /share
+    volumes:
+    - ./config/share_files/shareholder_20.json:/app/shares/share_files/share.json:ro
+    networks:
+    - SCADA-system
+  shareholder_21:
+    build:
+      context: .
+      dockerfile: src/shareholder/Dockerfile
+    environment:
+      PORT: '7000'
+      NODE_NAME: shareholder_21
+      SHARE_PATH: /app/shares/share_files/share.json
+      EXPORT_SHARE_PATH: /share
+    volumes:
+    - ./config/share_files/shareholder_21.json:/app/shares/share_files/share.json:ro
+    networks:
+    - SCADA-system
+  shareholder_22:
+    build:
+      context: .
+      dockerfile: src/shareholder/Dockerfile
+    environment:
+      PORT: '7000'
+      NODE_NAME: shareholder_22
+      SHARE_PATH: /app/shares/share_files/share.json
+      EXPORT_SHARE_PATH: /share
+    volumes:
+    - ./config/share_files/shareholder_22.json:/app/shares/share_files/share.json:ro
+    networks:
+    - SCADA-system
+  shareholder_23:
+    build:
+      context: .
+      dockerfile: src/shareholder/Dockerfile
+    environment:
+      PORT: '7000'
+      NODE_NAME: shareholder_23
+      SHARE_PATH: /app/shares/share_files/share.json
+      EXPORT_SHARE_PATH: /share
+    volumes:
+    - ./config/share_files/shareholder_23.json:/app/shares/share_files/share.json:ro
+    networks:
+    - SCADA-system
+  shareholder_24:
+    build:
+      context: .
+      dockerfile: src/shareholder/Dockerfile
+    environment:
+      PORT: '7000'
+      NODE_NAME: shareholder_24
+      SHARE_PATH: /app/shares/share_files/share.json
+      EXPORT_SHARE_PATH: /share
+    volumes:
+    - ./config/share_files/shareholder_24.json:/app/shares/share_files/share.json:ro
+    networks:
+    - SCADA-system
+  shareholder_25:
+    build:
+      context: .
+      dockerfile: src/shareholder/Dockerfile
+    environment:
+      PORT: '7000'
+      NODE_NAME: shareholder_25
+      SHARE_PATH: /app/shares/share_files/share.json
+      EXPORT_SHARE_PATH: /share
+    volumes:
+    - ./config/share_files/shareholder_25.json:/app/shares/share_files/share.json:ro
+    networks:
+    - SCADA-system
+  shareholder_26:
+    build:
+      context: .
+      dockerfile: src/shareholder/Dockerfile
+    environment:
+      PORT: '7000'
+      NODE_NAME: shareholder_26
+      SHARE_PATH: /app/shares/share_files/share.json
+      EXPORT_SHARE_PATH: /share
+    volumes:
+    - ./config/share_files/shareholder_26.json:/app/shares/share_files/share.json:ro
+    networks:
+    - SCADA-system
+  shareholder_27:
+    build:
+      context: .
+      dockerfile: src/shareholder/Dockerfile
+    environment:
+      PORT: '7000'
+      NODE_NAME: shareholder_27
+      SHARE_PATH: /app/shares/share_files/share.json
+      EXPORT_SHARE_PATH: /share
+    volumes:
+    - ./config/share_files/shareholder_27.json:/app/shares/share_files/share.json:ro
+    networks:
+    - SCADA-system
+  shareholder_28:
+    build:
+      context: .
+      dockerfile: src/shareholder/Dockerfile
+    environment:
+      PORT: '7000'
+      NODE_NAME: shareholder_28
+      SHARE_PATH: /app/shares/share_files/share.json
+      EXPORT_SHARE_PATH: /share
+    volumes:
+    - ./config/share_files/shareholder_28.json:/app/shares/share_files/share.json:ro
+    networks:
+    - SCADA-system
+  shareholder_29:
+    build:
+      context: .
+      dockerfile: src/shareholder/Dockerfile
+    environment:
+      PORT: '7000'
+      NODE_NAME: shareholder_29
+      SHARE_PATH: /app/shares/share_files/share.json
+      EXPORT_SHARE_PATH: /share
+    volumes:
+    - ./config/share_files/shareholder_29.json:/app/shares/share_files/share.json:ro
+    networks:
+    - SCADA-system
+  shareholder_30:
+    build:
+      context: .
+      dockerfile: src/shareholder/Dockerfile
+    environment:
+      PORT: '7000'
+      NODE_NAME: shareholder_30
+      SHARE_PATH: /app/shares/share_files/share.json
+      EXPORT_SHARE_PATH: /share
+    volumes:
+    - ./config/share_files/shareholder_30.json:/app/shares/share_files/share.json:ro
     networks:
     - SCADA-system
 networks:

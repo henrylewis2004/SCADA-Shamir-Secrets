@@ -215,7 +215,7 @@ def test_run(trial_count=1,target=os.environ.get("TEST_TARGET")):
     res=[]
     for i in range(0, trial_count):
         test_name = "outdated_ts"
-        print(f"--- 4) {test_name} (should be rejected) ---")
+        print(f"--- 5) {test_name} (should be rejected) ---")
 
         initial_value = read_register_address(host, modbus_port,register_address)
         end_time = time.time()
@@ -234,7 +234,7 @@ def test_run(trial_count=1,target=os.environ.get("TEST_TARGET")):
     res=[]
     for i in range(0, trial_count):
         test_name = "missing_shares"
-        print(f"--- 5) {test_name} (should be rejected) ---")
+        print(f"--- 6) {test_name} (should be rejected) ---")
 
         initial_value = read_register_address(host, modbus_port,register_address)
         end_time = time.time()

@@ -107,7 +107,6 @@ def control_channel_server(addr,port):
 
 
 async def gate_action(function_code, start_address, address, count, current_registers, set_values):
- #   time_gate_action = time.time()
     if set_values == None: return None #allows read instructions
 
     value = set_values[0] if len(set_values)==1 else tuple(set_values)
@@ -118,8 +117,6 @@ async def gate_action(function_code, start_address, address, count, current_regi
             return ExcCodes.NEGATIVE_ACKNOWLEDGE
         del authorised[(address,value)]
 
- #   time_gate_action = time.time() - time_gate_action
- #   print(f"address: {address}, value: {value}. applied, time: {time_gate_action} s", flush=True)
     return None
 
 def start_modbus_server(addr, port):

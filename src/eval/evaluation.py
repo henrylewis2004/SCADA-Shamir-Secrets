@@ -83,12 +83,12 @@ def export_csv(stage_avgs, results_summary,k,n,name, output_dir="/app/eval/"):
 
     with open(filename, "w", newline="") as f:
         w = csv.writer(f)
-        w.writerow(["--- stage timing averages (ms) ---"])
+        w.writerow([f"--- stage timing averages (ms) (k,n)=({k},{n}) ---"])
         w.writerow(["stage", "avg_ms"])
         for stage, val in stage_avgs.items():
             w.writerow([stage, val * 1000])
         w.writerow([])
-        w.writerow(["--- scenario results ---"])
+        w.writerow([f"--- scenario results (k,n)=({k},{n})---"])
         w.writerow(["scenario", "count", "avg_time_ms", "correct_authorised_rate_%", "register_value_change_rate_%"])
         for scenario, s in results_summary.items():
             w.writerow([scenario, s["cnt"], s["avg_time"], s["correct_authorised_rate"] * 100, s["correct_register_value_change"] * 100])
@@ -97,8 +97,9 @@ def export_csv(stage_avgs, results_summary,k,n,name, output_dir="/app/eval/"):
 def mtu_test_run(authorise_timeset,evaluation_results,k,n):
     authorise = mtu_authorise_time(authorise_timeset)
     evaluation = mtu_test_evaluation_results(evaluation_results)
-    export_csv(authorise,evaluation,k,n,f"mtu_eval_k{k}.csv")
+    export_csv(authorise,evaluation,k,n,f"mtu_eval_(k,n)=({k},{n}).csv")
 
     #excluding first
     authorise=mtu_authorise_time(authorise_timeset,True)
     evaluation=mtu_test_evaluation_results(evaluation_results,True)
+    export_csv(authorise,evaluation,k,n,f"mtu_eval_(k,n)=({k},{n}).csv","/app/eval/exclude_first")

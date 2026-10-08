@@ -49,11 +49,11 @@ def recover_secret(shares, prime=PRIME):
 
 def test():
     secret = 5
-    n = 10
-    k = 4
+    n = 5
+    k = 3
 
     shares = split_secret(secret,n,k)
-    rec=recover_secret(shares[3:8])
+    rec=recover_secret(shares[:k])
 
     print(f"n: {n}\nk:{k}")
     print(f"secret: {secret}\n")

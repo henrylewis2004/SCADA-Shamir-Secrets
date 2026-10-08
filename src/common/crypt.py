@@ -12,7 +12,7 @@ from shamir import recover_secret
 #get shares
 def fetch_share(url, token, timeout=2.0):
     #print(f"fetch_share: GET {url}, with token = {token}")
-    req = urlreq.Request(url, headers={"Authorization": f"Bearer {token}"})
+    req = urlreq.Request(url, headers={"Authorisation": f"Bearer {token}"})
 
     with urlreq.urlopen(req, timeout=timeout) as response:
         data = json.loads(response.read().decode())

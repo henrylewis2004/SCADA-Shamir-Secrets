@@ -3,9 +3,13 @@ import nodes
 
 import yaml
 
-N_COUNT = 5
-K_THRESHOLD = 3
+# n = 5,9,9,19,19,19,30,30,30
+# k = 3,3,5,3,5,10,3,5,10
+
+N_COUNT = 30
+K_THRESHOLD = 15
 SHAREHOLDER_PORT = 7000
+SHAREHOLDER_IP = "0.0.0.0"
 
 REAL_SHARE_PATH = "./config/share_files/"
 REAL_NODE_LIST_PATH = "./config/shareholders/"
@@ -62,7 +66,7 @@ def make_docker_compose(mtu_count=MTU_COUNT, field_device_count=FIELD_DEVICE_COU
                     "FIELD_DEVICE_COUNT": FIELD_DEVICE_COUNT,
                     ##test variables
                     "TEST_TARGET": "field_device_1",
-                    "TRIAL_COUNT": "5"
+                    "TRIAL_COUNT": "10"
                     },
                 "volumes": [f"{real_node_list_path}:{NODE_LIST_PATH}:ro",f"{real_device_list_path}:{FIELD_DEVICE_LIST_PATH}:ro",f"{REAL_EVAL_DIR}:{CONTAINER_EVAL_DIR}"],
                 "networks": ["SCADA-system"],
@@ -103,6 +107,7 @@ def make_docker_compose(mtu_count=MTU_COUNT, field_device_count=FIELD_DEVICE_COU
                     },
                 "environment":{
                     "PORT": str(share_port),
+                    "IP_ADDR": SHAREHOLDER_IP,
                     "NODE_NAME": name,
                     "SHARE_PATH": "/app/shares/share_files/share.json",
                     "EXPORT_SHARE_PATH": "/share"
