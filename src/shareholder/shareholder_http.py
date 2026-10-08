@@ -23,6 +23,7 @@ class Handler(BaseHTTPRequestHandler):
 
         if self.path != os.environ.get("EXPORT_SHARE_PATH"):
             self.send_response(404) #not found 
+            self.end_headers()
             return
 
         self.send_share()
