@@ -169,6 +169,7 @@ services:
       dockerfile: src/shareholder/Dockerfile
     environment:
       PORT: '7000'
+      IP_ADDR: 0.0.0.0
       NODE_NAME: shareholder_1
       SHARE_PATH: /app/shares/share_files/share.json
       EXPORT_SHARE_PATH: /share
@@ -182,6 +183,7 @@ services:
       dockerfile: src/shareholder/Dockerfile
     environment:
       PORT: '7000'
+      IP_ADDR: 0.0.0.0
       NODE_NAME: shareholder_2
       SHARE_PATH: /app/shares/share_files/share.json
       EXPORT_SHARE_PATH: /share
@@ -195,6 +197,7 @@ services:
       dockerfile: src/shareholder/Dockerfile
     environment:
       PORT: '7000'
+      IP_ADDR: 0.0.0.0
       NODE_NAME: shareholder_3
       SHARE_PATH: /app/shares/share_files/share.json
       EXPORT_SHARE_PATH: /share
@@ -208,6 +211,7 @@ services:
       dockerfile: src/shareholder/Dockerfile
     environment:
       PORT: '7000'
+      IP_ADDR: 0.0.0.0
       NODE_NAME: shareholder_4
       SHARE_PATH: /app/shares/share_files/share.json
       EXPORT_SHARE_PATH: /share
@@ -221,6 +225,7 @@ services:
       dockerfile: src/shareholder/Dockerfile
     environment:
       PORT: '7000'
+      IP_ADDR: 0.0.0.0
       NODE_NAME: shareholder_5
       SHARE_PATH: /app/shares/share_files/share.json
       EXPORT_SHARE_PATH: /share
@@ -234,6 +239,7 @@ services:
       dockerfile: src/shareholder/Dockerfile
     environment:
       PORT: '7000'
+      IP_ADDR: 0.0.0.0
       NODE_NAME: shareholder_6
       SHARE_PATH: /app/shares/share_files/share.json
       EXPORT_SHARE_PATH: /share
@@ -247,6 +253,7 @@ services:
       dockerfile: src/shareholder/Dockerfile
     environment:
       PORT: '7000'
+      IP_ADDR: 0.0.0.0
       NODE_NAME: shareholder_7
       SHARE_PATH: /app/shares/share_files/share.json
       EXPORT_SHARE_PATH: /share
@@ -260,6 +267,7 @@ services:
       dockerfile: src/shareholder/Dockerfile
     environment:
       PORT: '7000'
+      IP_ADDR: 0.0.0.0
       NODE_NAME: shareholder_8
       SHARE_PATH: /app/shares/share_files/share.json
       EXPORT_SHARE_PATH: /share
@@ -273,6 +281,7 @@ services:
       dockerfile: src/shareholder/Dockerfile
     environment:
       PORT: '7000'
+      IP_ADDR: 0.0.0.0
       NODE_NAME: shareholder_9
       SHARE_PATH: /app/shares/share_files/share.json
       EXPORT_SHARE_PATH: /share
@@ -286,6 +295,7 @@ services:
       dockerfile: src/shareholder/Dockerfile
     environment:
       PORT: '7000'
+      IP_ADDR: 0.0.0.0
       NODE_NAME: shareholder_10
       SHARE_PATH: /app/shares/share_files/share.json
       EXPORT_SHARE_PATH: /share
@@ -299,6 +309,7 @@ services:
       dockerfile: src/shareholder/Dockerfile
     environment:
       PORT: '7000'
+      IP_ADDR: 0.0.0.0
       NODE_NAME: shareholder_11
       SHARE_PATH: /app/shares/share_files/share.json
       EXPORT_SHARE_PATH: /share
@@ -312,6 +323,7 @@ services:
       dockerfile: src/shareholder/Dockerfile
     environment:
       PORT: '7000'
+      IP_ADDR: 0.0.0.0
       NODE_NAME: shareholder_12
       SHARE_PATH: /app/shares/share_files/share.json
       EXPORT_SHARE_PATH: /share
@@ -325,6 +337,7 @@ services:
       dockerfile: src/shareholder/Dockerfile
     environment:
       PORT: '7000'
+      IP_ADDR: 0.0.0.0
       NODE_NAME: shareholder_13
       SHARE_PATH: /app/shares/share_files/share.json
       EXPORT_SHARE_PATH: /share
@@ -338,6 +351,7 @@ services:
       dockerfile: src/shareholder/Dockerfile
     environment:
       PORT: '7000'
+      IP_ADDR: 0.0.0.0
       NODE_NAME: shareholder_14
       SHARE_PATH: /app/shares/share_files/share.json
       EXPORT_SHARE_PATH: /share
@@ -351,6 +365,7 @@ services:
       dockerfile: src/shareholder/Dockerfile
     environment:
       PORT: '7000'
+      IP_ADDR: 0.0.0.0
       NODE_NAME: shareholder_15
       SHARE_PATH: /app/shares/share_files/share.json
       EXPORT_SHARE_PATH: /share
@@ -364,6 +379,7 @@ services:
       dockerfile: src/shareholder/Dockerfile
     environment:
       PORT: '7000'
+      IP_ADDR: 0.0.0.0
       NODE_NAME: shareholder_16
       SHARE_PATH: /app/shares/share_files/share.json
       EXPORT_SHARE_PATH: /share
@@ -377,6 +393,7 @@ services:
       dockerfile: src/shareholder/Dockerfile
     environment:
       PORT: '7000'
+      IP_ADDR: 0.0.0.0
       NODE_NAME: shareholder_17
       SHARE_PATH: /app/shares/share_files/share.json
       EXPORT_SHARE_PATH: /share
@@ -390,6 +407,7 @@ services:
       dockerfile: src/shareholder/Dockerfile
     environment:
       PORT: '7000'
+      IP_ADDR: 0.0.0.0
       NODE_NAME: shareholder_18
       SHARE_PATH: /app/shares/share_files/share.json
       EXPORT_SHARE_PATH: /share
@@ -403,6 +421,7 @@ services:
       dockerfile: src/shareholder/Dockerfile
     environment:
       PORT: '7000'
+      IP_ADDR: 0.0.0.0
       NODE_NAME: shareholder_19
       SHARE_PATH: /app/shares/share_files/share.json
       EXPORT_SHARE_PATH: /share
@@ -416,6 +435,7 @@ services:
       dockerfile: src/shareholder/Dockerfile
     environment:
       PORT: '7000'
+      IP_ADDR: 0.0.0.0
       NODE_NAME: shareholder_20
       SHARE_PATH: /app/shares/share_files/share.json
       EXPORT_SHARE_PATH: /share
@@ -429,6 +449,7 @@ services:
       dockerfile: src/shareholder/Dockerfile
     environment:
       PORT: '7000'
+      IP_ADDR: 0.0.0.0
       NODE_NAME: shareholder_21
       SHARE_PATH: /app/shares/share_files/share.json
       EXPORT_SHARE_PATH: /share
@@ -442,6 +463,7 @@ services:
       dockerfile: src/shareholder/Dockerfile
     environment:
       PORT: '7000'
+      IP_ADDR: 0.0.0.0
       NODE_NAME: shareholder_22
       SHARE_PATH: /app/shares/share_files/share.json
       EXPORT_SHARE_PATH: /share
@@ -455,6 +477,7 @@ services:
       dockerfile: src/shareholder/Dockerfile
     environment:
       PORT: '7000'
+      IP_ADDR: 0.0.0.0
       NODE_NAME: shareholder_23
       SHARE_PATH: /app/shares/share_files/share.json
       EXPORT_SHARE_PATH: /share
@@ -468,6 +491,7 @@ services:
       dockerfile: src/shareholder/Dockerfile
     environment:
       PORT: '7000'
+      IP_ADDR: 0.0.0.0
       NODE_NAME: shareholder_24
       SHARE_PATH: /app/shares/share_files/share.json
       EXPORT_SHARE_PATH: /share
@@ -481,6 +505,7 @@ services:
       dockerfile: src/shareholder/Dockerfile
     environment:
       PORT: '7000'
+      IP_ADDR: 0.0.0.0
       NODE_NAME: shareholder_25
       SHARE_PATH: /app/shares/share_files/share.json
       EXPORT_SHARE_PATH: /share
@@ -494,6 +519,7 @@ services:
       dockerfile: src/shareholder/Dockerfile
     environment:
       PORT: '7000'
+      IP_ADDR: 0.0.0.0
       NODE_NAME: shareholder_26
       SHARE_PATH: /app/shares/share_files/share.json
       EXPORT_SHARE_PATH: /share
@@ -507,6 +533,7 @@ services:
       dockerfile: src/shareholder/Dockerfile
     environment:
       PORT: '7000'
+      IP_ADDR: 0.0.0.0
       NODE_NAME: shareholder_27
       SHARE_PATH: /app/shares/share_files/share.json
       EXPORT_SHARE_PATH: /share
@@ -520,6 +547,7 @@ services:
       dockerfile: src/shareholder/Dockerfile
     environment:
       PORT: '7000'
+      IP_ADDR: 0.0.0.0
       NODE_NAME: shareholder_28
       SHARE_PATH: /app/shares/share_files/share.json
       EXPORT_SHARE_PATH: /share
@@ -533,6 +561,7 @@ services:
       dockerfile: src/shareholder/Dockerfile
     environment:
       PORT: '7000'
+      IP_ADDR: 0.0.0.0
       NODE_NAME: shareholder_29
       SHARE_PATH: /app/shares/share_files/share.json
       EXPORT_SHARE_PATH: /share
@@ -546,6 +575,7 @@ services:
       dockerfile: src/shareholder/Dockerfile
     environment:
       PORT: '7000'
+      IP_ADDR: 0.0.0.0
       NODE_NAME: shareholder_30
       SHARE_PATH: /app/shares/share_files/share.json
       EXPORT_SHARE_PATH: /share

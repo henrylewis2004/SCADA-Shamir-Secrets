@@ -15,16 +15,17 @@ share_x, share_y, share_token = read_share() #note may crash if missing file
 
 class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
-        if self.path != os.environ.get("EXPORT_SHARE_PATH"):
-            self.send_response(404) #not found 
+        if self.headers.get("Authorisation") != f"Bearer {share_token}":
+            self.send_response(401) #unauthorised 
             self.end_headers()
             return
 
-        if self.headers.get("Authorisation") == f"Bearer {share_token}":
-            self.send_share()
+
+        if self.path != os.environ.get("EXPORT_SHARE_PATH"):
+            self.send_response(404) #not found 
             return
 
-        self.send_response(401) #unauthorised 
+        self.send_share()
         self.end_headers()
 
     def send_share(self):
