@@ -78,19 +78,23 @@ def send_message(message, host, control_port, modbus_port, address, value, timeo
         return False, timeset
     #print(f"time to authorise message: {timeset["auth_time"]*1000} ms")
 
+    message = json.loads(message)
     end_time=time.time()
 
-    client = ModbusTcpClient(host, port=modbus_port, timeout=timeout)
-    client.connect()
-    response = client.write_register(address, value, device_id=1)
+    match message["function"]:
+        case "write_register":
+            response = write_register(host, modbus_port, address,value)
+        case "read_register":
+            response = read_register_address(host,modbus_port)
 
     #print(f"mtu send message response: {response}, time to send: {end_time*1000} ms",flush=True)
-    client.close()
 
     timeset["send_message"] =time.time() - end_time
     return not response.isError(), timeset
+
 
 def debug_send_message_no_authorisation(message, host, control_port, modbus_port, address, value, timeout=5.0, missing_share_count=0):
+    timeset = {}
     end_time=time.time()
 
     client = ModbusTcpClient(host, port=modbus_port, timeout=timeout)
@@ -102,6 +106,13 @@ def debug_send_message_no_authorisation(message, host, control_port, modbus_port
 
     timeset["send_message"] =time.time() - end_time
     return not response.isError(), timeset
+
+def write_register(host, modbus_port, address, value,timeout=5.0):
+    client = ModbusTcpClient(host, port=modbus_port, timeout=timeout)
+    client.connect()
+    response = client.write_register(address, value, device_id=1)
+    client.close()
+    return response
 
 def read_register_address(host, modbus_port, address, timeout=5.0):
     client = ModbusTcpClient(host, port=modbus_port, timeout=timeout)
@@ -122,29 +133,35 @@ def test_run(trial_count=1,target=os.environ.get("TEST_TARGET")):
     control_port = field_devices[target]["control_port"] 
     modbus_port = field_devices[target]["modbus_port"] 
     register_address = 10
-    value = [42,24]
 
     trial_res = {}
 
     res = []
     auth_time_res=[]
+    value = [1,2]
     for i in range(0, trial_count):
         time_cost={}
 
         test_name = "legitimate_command"
-        print(f"--- 1) {test_name}: target={target} addr={register_address} value={value} ---")
 
+        initial_value = read_register_address(host, modbus_port,register_address)
+
+        val = value[False]
+        if val == initial_value[0]:
+            val = value[True]
+
+        print(f"--- 1) {test_name}: target={target} addr={register_address} value={val} ---")
         end_time = time.time()
 
-        msg, time_cost["make_message"]= make_message(target, "write_register", register_address, value[i%2])
+        msg, time_cost["make_message"]= make_message(target, "write_register", register_address, val)    
         
 
-        ok, time_cost["send_message_set"] = send_message(msg, host, control_port, modbus_port, register_address, value[i%2])
+        ok, time_cost["send_message_set"] = send_message(msg, host, control_port, modbus_port, register_address, val)
 
         end_time = time.time() - end_time
 
         response_value = read_register_address(host, modbus_port,register_address)
-        print(f"result: {ok}, value_change_correct: {response_value[0]==value[i%2]}, time: {end_time*1000} ms\n",flush=True)
+        print(f"result: {ok}, value_change_correct: {response_value[0]==val}, time: {end_time*1000} ms\n",flush=True)
 
         time_cost["total_time"] = end_time 
 
@@ -159,11 +176,12 @@ def test_run(trial_count=1,target=os.environ.get("TEST_TARGET")):
         print(f"total time: {time_cost["total_time"]*1000} ms\n")
 
         auth_time_res.append(time_cost)
-        res.append({"correct_result": ok==True, "value_change_correct":response_value[0]==value[i%2] ,"time": end_time})
+        res.append({"correct_result": ok==True, "value_change_correct":response_value[0]==val ,"time": end_time})
 
     trial_res[test_name]=res
 
     res=[]
+    value = [3,4]
     for i in range(0, trial_count):
         test_name = "replay_message"
         print(f"--- 2) {test_name} without new authorisation (should be rejected) ---")
@@ -172,9 +190,15 @@ def test_run(trial_count=1,target=os.environ.get("TEST_TARGET")):
         ok,_ = send_message(msg, host, control_port, modbus_port, register_address, value[i%2])
 
         initial_value = read_register_address(host, modbus_port,register_address)
+
+        val = value[False]
+        if val == initial_value[0]:
+            val = value[True]
+
         end_time = time.time()
 
-        ok,_ = send_message(msg, host, control_port, modbus_port, register_address, value[i%2])  
+        ok,_ = send_message(msg, host, control_port, modbus_port, register_address, val)  
+
         end_time = time.time() - end_time
         final_value = read_register_address(host, modbus_port,register_address)
 
@@ -184,13 +208,21 @@ def test_run(trial_count=1,target=os.environ.get("TEST_TARGET")):
     trial_res[test_name]=res
 
     res=[]
+    value = [5,6]
     for i in range(0, trial_count):
         test_name = "wrong_target"
         print(f"--- 3) {test_name} (should be rejected) ---")
         initial_value = read_register_address(host, modbus_port,register_address)
+
+        val = value[False]
+        if val == initial_value[0]:
+            val = value[True]
+
         end_time = time.time()
-        msg,_ = make_message("not_a_real_plc", "write_register", register_address, value[i%2])
-        ok,_ = send_message(msg, host, control_port, modbus_port, register_address, value[i%2])
+
+        msg,_ = make_message("not_a_real_plc", "write_register", register_address, val)  
+        ok,_ = send_message(msg, host, control_port, modbus_port, register_address, val)
+
         end_time = time.time() - end_time
         final_value = read_register_address(host, modbus_port,register_address)
         print(f"result: {ok}, value_change_correct: {initial_value==final_value}, time: {end_time*1000} ms\n",flush=True)
@@ -200,13 +232,22 @@ def test_run(trial_count=1,target=os.environ.get("TEST_TARGET")):
     trial_res[test_name]=res
 
     res=[]
+    value = [7,8]
     for i in range(0, trial_count):
         test_name = "mismatched_values"
         print(f"--- 4) {test_name} between signed message and actual write (should be rejected) ---")
+
         initial_value = read_register_address(host, modbus_port,register_address)
+
+        val = value[False]
+        if val == initial_value[0]:
+            val = value[True]
+
         end_time = time.time()
-        msg,_ = make_message(target, "write_register", register_address, value[i%2])
+
+        msg,_ = make_message(target, "write_register", register_address, val)
         ok,_ = send_message(msg, host, control_port, modbus_port, register_address, 9999)  # different value than what was signed
+
         end_time = time.time() - end_time
         final_value = read_register_address(host, modbus_port,register_address)
         print(f"result: {ok}, value_change_correct: {initial_value==final_value}, time: {end_time*1000} ms\n",flush=True)
@@ -216,15 +257,21 @@ def test_run(trial_count=1,target=os.environ.get("TEST_TARGET")):
     trial_res[test_name]=res
 
     res=[]
+    value = [9,10]
     for i in range(0, trial_count):
         test_name = "outdated_ts"
         print(f"--- 5) {test_name} (should be rejected) ---")
 
         initial_value = read_register_address(host, modbus_port,register_address)
+
+        val = value[False]
+        if val == initial_value[0]:
+            val = value[True]
+
         end_time = time.time()
 
-        msg,_ = make_message(target, "write_register", register_address, value[i%2],time.time() - 100)
-        ok,_ = send_message(msg, host, control_port, modbus_port, register_address, value[i%2])  
+        msg,_ = make_message(target, "write_register", register_address, val,time.time() - 100)
+        ok,_ = send_message(msg, host, control_port, modbus_port, register_address, val)  
 
         end_time = time.time() - end_time
         final_value = read_register_address(host, modbus_port,register_address)
@@ -235,15 +282,48 @@ def test_run(trial_count=1,target=os.environ.get("TEST_TARGET")):
     trial_res[test_name]=res
 
     res=[]
+    value = [11,12]
     for i in range(0, trial_count):
         test_name = "missing_shares"
         print(f"--- 6) {test_name} (should be rejected) ---")
 
         initial_value = read_register_address(host, modbus_port,register_address)
+
+        val = value[False]
+        if val == initial_value[0]:
+            val = value[True]
+
         end_time = time.time()
 
-        msg,_ = make_message(target, "write_register", register_address, value[i%2],time.time())
-        ok,_ = send_message(msg, host, control_port, modbus_port, register_address, value[i%2], missing_share_count=2)  
+        msg,_ = make_message(target, "write_register", register_address, val,time.time())
+        ok,_ = send_message(msg, host, control_port, modbus_port, register_address, val, missing_share_count=2)  
+
+        end_time = time.time() - end_time
+        final_value = read_register_address(host, modbus_port,register_address)
+        print(f"result: {ok}, value_change_correct: {initial_value==final_value}, time: {end_time*1000} ms\n",flush=True)
+
+        res.append({"correct_result": ok==False, "value_change_correct":final_value==initial_value, "time": end_time})
+
+    trial_res[test_name]=res
+
+    res=[]
+    value = [13,14]
+    for i in range(0, trial_count):
+        test_name = "authorisation_skip"
+        print(f"--- 7) {test_name} (should be rejected) ---")
+
+        initial_value = read_register_address(host, modbus_port,register_address)
+
+        val = value[False]
+        if val == initial_value[0]:
+            val = value[True]
+
+        print(f"val={val}")
+
+        end_time = time.time()
+
+        msg,_ = make_message(target, "write_register", register_address, val,time.time())
+        ok,_ = debug_send_message_no_authorisation(msg, host, control_port, modbus_port, register_address, val)      
 
         end_time = time.time() - end_time
         final_value = read_register_address(host, modbus_port,register_address)

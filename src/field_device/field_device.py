@@ -113,8 +113,14 @@ async def gate_action(function_code, start_address, address, count, current_regi
 
     with lock:
         if (address, value) not in authorised or authorised[(address,value)] < time.time():
-            print(f"address: {address}, value: {value}. not authorised")
+            reason = "not in authorised list" 
+            if (address, value) in authorised:
+                reason = "old timestamp"
+
+            print(f"address: {address}, value: {value}. not authorised because {reason}",flush=True)
             return ExcCodes.NEGATIVE_ACKNOWLEDGE
+
+        print(f"address: {address}, value: {value} in authorised: {authorised}", flush=True)
         del authorised[(address,value)]
 
     return None
