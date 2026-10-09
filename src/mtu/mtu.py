@@ -17,8 +17,11 @@ n = int(os.environ.get("N_COUNT"))
 
 def make_message(target,function,modbus_address,modbus_value,ts=time.time()):
     make_message_time = time.time()
+
     msg = crypt.message(target,function,modbus_address,modbus_value,crypt.new_nonce(),ts,encode=False)
+
     make_message_time = time.time() - make_message_time
+
     #print(f"time to make message: {end_time*1000} ms")
     return msg, make_message_time
 
