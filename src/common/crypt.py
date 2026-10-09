@@ -19,7 +19,7 @@ def fetch_share(url, token, timeout=2.0):
         return (data["x"], data["y"])
 
 def collect_shares(shareholders, k, timeout=2.0):
-    # shareholders: list of [(address, token)]
+    # shareholders: list of [(url, token)]
     if not shareholders:
         raise ValueError("collect_shares: no shareholders provided")
     if len(shareholders) < k:
@@ -27,16 +27,16 @@ def collect_shares(shareholders, k, timeout=2.0):
 
     shares = []
     with ThreadPoolExecutor(max_workers=len(shareholders)) as pool:
-        futures = {
+        future_list = {
                 pool.submit(fetch_share, holder["url"], holder["token"], timeout): holder 
                 for holder in shareholders
                 }
 
-        for fut in as_completed(futures):
+        for future in as_completed(future_list):
             try:
-                shares.append(fut.result())
+                shares.append(future.result())
             except Exception as e:
-                print(f"collect_shares exception: {e}")
+                print(f"collect_shares shareholder exception: {e}")
                 continue  # shareholder failed/timed out 
             if len(shares) >= k:
                 break

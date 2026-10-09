@@ -41,8 +41,9 @@ class Handler(BaseHTTPRequestHandler):
 
 def main():
     server = ThreadingHTTPServer((ip_addr, port_addr), Handler)
-    print(f"listening on :{port_addr}")
     server.serve_forever()
+
+    print(f"listening on :{port_addr}")
 
 if __name__ == "__main__":
     main()
