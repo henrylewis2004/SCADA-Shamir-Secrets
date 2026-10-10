@@ -70,7 +70,12 @@ def authorise(msg_str, sig_hex):
         if not fresh_check(nonce,ts): return False
 
         seen_nonces[nonce] = time.time()+max_nonce_life
-        authorised[(address,value)] = time.time()+max_nonce_life
+
+        match payload["function"]:
+            case "write_register":
+                authorised[(address,value)] = time.time()+max_nonce_life
+            case "read_register":
+                pass #read register is always allowed through gate_action for debug purposes
     
     time_authorise = time.time() - time_authorise
     print(f"time to authorise: {time_authorise*1000} ms", flush=True)
