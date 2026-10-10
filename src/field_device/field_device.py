@@ -34,7 +34,7 @@ def fresh_check(nonce,ts):
     if abs(time.time() - ts) > max_nonce_life: return False
     return nonce not in seen_nonces
 
-def nonce_age_check():
+def nonce_auth_age_check():
     for nonce  in list(seen_nonces):
         if seen_nonces[nonce] < time.time():
             del seen_nonces[nonce]
@@ -66,7 +66,7 @@ def authorise(msg_str, sig_hex):
         return False
 
     with lock:
-        nonce_age_check()
+        nonce_auth_age_check()
         if not fresh_check(nonce,ts): return False
 
         seen_nonces[nonce] = time.time()+max_nonce_life
