@@ -5,15 +5,15 @@ import time
 import os
 
 from pymodbus.constants import ExcCodes 
-from pymodbus.simulator.simdata import SimData
-from pymodbus.simulator.simdevice import SimDevice
+from pymodbus.simulator.simdata import SimData #simulates registers
+from pymodbus.simulator.simdevice import SimDevice #simulates devices
 from pymodbus.simulator.simutils import DataType
 from pymodbus.server import StartTcpServer
 
 import crypt 
 from nodes import load_nodes
 
-lock = threading.Lock() #maybe switch to asynclock
+lock = threading.Lock() 
 seen_nonces = {}     # key: nonce -> value: expiry timestamp
 authorised = {}      # key: (address, value) -> value: expiry timestamp
 max_nonce_life = 5.0
@@ -59,8 +59,10 @@ def authorise(msg_str, sig_hex):
         shares = crypt.collect_shares(nodes,k)
         key = bytearray(crypt.recover_key(shares)) 
         ok = crypt.verify(bytes(key), msg_str.encode(), sig_hex)
+
     except Exception as e:
         print(f"send command hex generation failure, exception: {e}")
+
     finally:
         if key is not None:
             crypt.zeroise(key)
@@ -72,7 +74,7 @@ def authorise(msg_str, sig_hex):
         authorised[(address,value)] = time.time()+max_nonce_life
     
     time_authorise = time.time() - time_authorise
-    print(f"time to authorise: {time_authorise} s", flush=True)
+    print(f"time to authorise: {time_authorise*1000} ms", flush=True)
     return True
 
 def serve_one(connection):
