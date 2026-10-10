@@ -36,7 +36,7 @@ def message_authorised(msg, host, control_port, missing_share_count, timeout=5.0
         timeset["share_collection"] = time.time() - share_time  
 
         con_time = time.time()
-        key = bytearray(crypt.recover_key(shares[0:len(shares)-missing_share_count])) #maybe look at collecting own share first
+        key = bytearray(crypt.recover_key(shares[0:len(shares)-missing_share_count])) 
         timeset["key_construction"] = time.time() - con_time
 
         sign_time = time.time()
@@ -185,11 +185,19 @@ def test_run(trial_count=1,target=os.environ.get("TEST_TARGET")):
     for i in range(0, trial_count):
         test_name = "replay_message"
         print(f"--- 2) {test_name} without new authorisation (should be rejected) ---")
-
-        msg,_ = make_message(target, "write_register", register_address, value[i%2])
-        ok,_ = send_message(msg, host, control_port, modbus_port, register_address, value[i%2])
-
         initial_value = read_register_address(host, modbus_port,register_address)
+
+        val = value[False]
+        if val == initial_value[0]:
+            val = value[True]
+
+        msg,_ = make_message(target, "write_register", register_address, val)
+        ok,_ = send_message(msg, host, control_port, modbus_port, register_address, val)
+
+        temp_val = initial_value
+        initial_value = read_register_address(host, modbus_port,register_address)
+
+        print(f"first authenticated message result authorised={ok}, init value: {temp_val}, final_value: {initial_value} ",flush=True)
 
         val = value[False]
         if val == initial_value[0]:

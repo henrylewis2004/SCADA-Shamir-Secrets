@@ -57,7 +57,7 @@ def authorise(msg_str, sig_hex):
     key = None
     try:
         shares = crypt.collect_shares(nodes,k)
-        key = bytearray(crypt.recover_key(shares)) #maybe look at collecting own share first
+        key = bytearray(crypt.recover_key(shares)) 
         ok = crypt.verify(bytes(key), msg_str.encode(), sig_hex)
     except Exception as e:
         print(f"send command hex generation failure, exception: {e}")
@@ -107,11 +107,11 @@ def control_channel_server(addr,port):
 
 
 async def gate_action(function_code, start_address, address, count, current_registers, set_values):
-    if set_values == None: return None #allows read instructions
+    if set_values == None: return None #read instructions pass
 
     value = set_values[0] if len(set_values)==1 else tuple(set_values)
 
-    with lock:
+    with lock: 
         if (address, value) not in authorised or authorised[(address,value)] < time.time():
             reason = "not in authorised list" 
             if (address, value) in authorised:
