@@ -49,11 +49,6 @@ def authorise(msg_str, sig_hex):
 
     if target != node_name: return False
 
-    with lock:
-        nonce_age_check()
-        if not fresh_check(nonce,ts): return False
-        seen_nonces[nonce] = time.time()+max_nonce_life
-
     key = None
     try:
         shares = crypt.collect_shares(nodes,k)
@@ -71,6 +66,10 @@ def authorise(msg_str, sig_hex):
         return False
 
     with lock:
+        nonce_age_check()
+        if not fresh_check(nonce,ts): return False
+
+        seen_nonces[nonce] = time.time()+max_nonce_life
         authorised[(address,value)] = time.time()+max_nonce_life
     
     time_authorise = time.time() - time_authorise
