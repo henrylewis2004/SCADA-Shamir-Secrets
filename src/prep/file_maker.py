@@ -124,7 +124,7 @@ def make_docker_compose(mtu_count=MTU_COUNT, field_device_count=FIELD_DEVICE_COU
 
     compose = {"services": services, "networks": networks}
 
-    with open("docker-compose.yml", "w") as f:
+    with open("docker-compose.yaml", "w") as f:
         yaml.dump(compose, f, default_flow_style=False, sort_keys=False)
 
     print(f"docker-compose written")
