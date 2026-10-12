@@ -132,9 +132,10 @@ async def gate_action(function_code, start_address, address, count, current_regi
     return None
 
 def start_modbus_server(addr, port):
-    hr_block = SimData(0, count=100, values=0, datatype=DataType.REGISTERS)
-    device = SimDevice(id=1, simdata=[hr_block], action=gate_action)
+    register_block = SimData(0, count=100, values=0, datatype=DataType.REGISTERS)
+    device = SimDevice(id=1, simdata=[register_block], action=gate_action)
     #device = SimDevice(id=1, simdata=[hr_block]) #control test with no authorisation gate 
+
     print(f"Modbus TCP server listening on :{port}",flush=True)
     StartTcpServer(context=device, address=(addr, port))
 

@@ -57,6 +57,7 @@ def message_authorised(msg, host, control_port, missing_share_count, timeout=5.0
 
     payload = json.dumps({"msg": msg, "sig": sig_hex}).encode() + b"\n"
 
+    #control channel socket 
     try:
         auth_time = time.time()
         with socket.create_connection((host, control_port), timeout=timeout) as sock:
