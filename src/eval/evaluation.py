@@ -36,17 +36,17 @@ def mtu_authorise_time(authorise_timeset,exclude_first=False):
     
     cnt = len(authorise_timeset) - int(exclude_first==True)
     for cost in timeset:
-        timeset[cost] = timeset[cost] / cnt
+        timeset[cost] = (timeset[cost] / cnt) * 1000
 
-    print(f"avg time to make message: {timeset["make_message"]*1000} ms")
-    print(f"avg time to send_message: {timeset["send_message"]*1000} ms")
-    print(f"avg time to authorise message: {timeset["total_auth_time"]*1000} ms")
-    print(f" --- avg time to collect shares: {timeset["share_collect_time"]*1000} ms")
-    print(f" --- avg time to construct key: {timeset["key_construction"]*1000} ms")
-    print(f" --- avg time to sign message: {timeset["message_signature_time"]*1000} ms")
-    print(f" --- avg time to zeroise key: {timeset["zeroise_time"]*1000} ms")
-    print(f" --- avg time to connect authorisation: {timeset["auth_time"]*1000} ms")
-    print(f"avg total time: {timeset["total_time"]*1000} ms\n")
+    print(f"avg time to make message: {timeset["make_message"]} ms")
+    print(f"avg time to send_message: {timeset["send_message"]} ms")
+    print(f"avg time to authorise message: {timeset["total_auth_time"]} ms")
+    print(f" --- avg time to collect shares: {timeset["share_collect_time"]} ms")
+    print(f" --- avg time to construct key: {timeset["key_construction"]} ms")
+    print(f" --- avg time to sign message: {timeset["message_signature_time"]} ms")
+    print(f" --- avg time to zeroise key: {timeset["zeroise_time"]} ms")
+    print(f" --- avg time to connect authorisation: {timeset["auth_time"]} ms")
+    print(f"avg total time: {timeset["total_time"]} ms\n")
 
     return timeset
 
@@ -67,12 +67,44 @@ def mtu_test_evaluation_results(timeset,exclude_first=False):
             register_value_change_rate += trial.get("value_change_correct",False)==True
 
         cnt = len(timeset[res]) - int(exclude_first==True)
-        avg_time = avg_time/cnt
+        avg_time = avg_time/cnt * 1000
         correct_authorised_rate = correct_authorised_rate/cnt
         register_value_change_rate = register_value_change_rate/cnt
 
-        print(f"{res} (cnt: {cnt}): avg_time={avg_time*1000} ms, correct_authorised_rate={correct_authorised_rate*100}%, correct_register_value_change={register_value_change_rate*100}%",flush=True)
-        results[res] = {"cnt": cnt, "avg_time": avg_time*1000, "correct_authorised_rate": correct_authorised_rate, "correct_register_value_change": register_value_change_rate}
+        print(f"{res} (cnt: {cnt}): avg_time={avg_time} ms, correct_authorised_rate={correct_authorised_rate*100}%, correct_register_value_change={register_value_change_rate*100}%",flush=True)
+        results[res] = {"cnt": cnt, "avg_time": avg_time, "correct_authorised_rate": correct_authorised_rate, "correct_register_value_change": register_value_change_rate}
+
+    print()
+    return results
+
+def control_results(res,exclude_first=False):
+    if exclude_first:
+        print("Excluding first test:")
+
+    print(f"MTU Evaluation Control Test results:")
+
+    avg_time = 0
+    avg_send_msg_time = 0
+    correct_authorised_rate = 0
+    register_value_change_rate = 0
+
+    for trial in res[exclude_first==True:]:
+        avg_time += trial.get("time",0)
+        avg_send_msg_time = trial.get("time_send_message",0)
+        correct_authorised_rate += trial.get("correct_result",False)==True
+        register_value_change_rate += trial.get("value_change_correct",False)==True
+
+
+    cnt = len(res) - int(exclude_first==True)
+
+    avg_time = avg_time/cnt * 1000
+    avg_send_msg_time = avg_send_msg_time/cnt * 1000
+    correct_authorised_rate = correct_authorised_rate/cnt 
+    register_value_change_rate = register_value_change_rate/cnt
+
+    print(f"(cnt: {cnt}): avg_time={avg_time} ms, avg_send_msg_time={avg_send_msg_time} ms, correct_authorised_rate={correct_authorised_rate*100}%, correct_register_value_change={register_value_change_rate*100}%",flush=True)
+
+    results = {"cnt": cnt, "avg_time": avg_time, "avg_send_msg_time": avg_send_msg_time,"correct_authorised_rate": correct_authorised_rate, "correct_register_value_change": register_value_change_rate}
 
     print()
     return results
@@ -82,17 +114,33 @@ def export_csv(stage_avgs, results_summary,k,n,name, output_dir="/app/eval/"):
     filename = os.path.join(output_dir,name)
 
     with open(filename, "w", newline="") as f:
-        w = csv.writer(f)
-        w.writerow([f"--- stage timing averages (ms) (k,n)=({k},{n}) ---"])
-        w.writerow(["stage", "avg_ms"])
+        writer  = csv.writer(f)
+        writer.writerow([f"--- stage timing averages (ms) (k,n)=({k},{n}) ---"])
+        writer.writerow(["stage", "avg_ms"])
         for stage, val in stage_avgs.items():
-            w.writerow([stage, val * 1000])
-        w.writerow([])
-        w.writerow([f"--- scenario results (k,n)=({k},{n})---"])
-        w.writerow(["scenario", "count", "avg_time_ms", "correct_authorised_rate_%", "register_value_change_rate_%"])
-        for scenario, s in results_summary.items():
-            w.writerow([scenario, s["cnt"], s["avg_time"], s["correct_authorised_rate"] * 100, s["correct_register_value_change"] * 100])
+            writer.writerow([stage, val * 1000])
+
+        writer.writerow([])
+        writer.writerow([f"--- scenario results (k,n)=({k},{n})---"])
+        writer.writerow(["scenario", "count", "avg_time_ms", "correct_authorised_rate_%", "register_value_change_rate_%"])
+        for scenario, val in results_summary.items():
+            writer.writerow([scenario, val["cnt"], val["avg_time"], val["correct_authorised_rate"], val["correct_register_value_change"]])
+
     print(f"wrote {filename}")
+
+def export_control_csv(control_res,name, output_dir="/app/eval/"):
+    os.makedirs(output_dir,exist_ok=True)
+    filename = os.path.join(output_dir,name)
+
+    with open(filename, "w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow([f"--- control timing results ---"])
+        writer.writerow(["cnt", "avg_time" ,"avg_send_msg_time","correct_authorised_rate_%", "correct_register_value_change_%"])
+        print(f"control_res: {control_res}", flush=True)
+        writer.writerow([control_res["cnt"],control_res["avg_time"],control_res["avg_send_msg_time"],control_res["correct_authorised_rate"],control_res["correct_register_value_change"]])
+
+    print(f"wrote {filename}")
+
 
 def mtu_test_run(authorise_timeset,evaluation_results,k,n):
     authorise = mtu_authorise_time(authorise_timeset)
@@ -100,6 +148,15 @@ def mtu_test_run(authorise_timeset,evaluation_results,k,n):
     export_csv(authorise,evaluation,k,n,f"mtu_eval_(k,n)=({k},{n}).csv")
 
     #excluding first
-    authorise=mtu_authorise_time(authorise_timeset,True)
-    evaluation=mtu_test_evaluation_results(evaluation_results,True)
+    authorise=mtu_authorise_time(authorise_timeset,exclude_first=True)
+    evaluation=mtu_test_evaluation_results(evaluation_results,exclude_first=True)
     export_csv(authorise,evaluation,k,n,f"mtu_eval_(k,n)=({k},{n}).csv","/app/eval/exclude_first")
+
+def control_test_run(res,):
+    results = control_results(res)
+    print(f"resutls: {results}", flush=True)
+    export_control_csv(results,f"control_mtu_eval.csv")
+
+    #excluding first
+    results = control_results(res,exclude_first=True)
+    export_control_csv(results,f"control_mtu_eval.csv","/app/eval/exclude_first")

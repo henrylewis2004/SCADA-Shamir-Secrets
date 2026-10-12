@@ -3,6 +3,7 @@ import urllib.request as urlreq
 import json
 import os
 import time
+import secrets
 
 from Crypto.Hash import CMAC
 from Crypto.Cipher import AES #used by Adamako? Prevelent in scada systems?
@@ -59,7 +60,7 @@ def message(target, function, address, value, nonce, ts, encode=True):
     else:      return json.dumps(payload, sort_keys=True, separators=(",", ":"))
 
 def new_nonce():
-    return os.urandom(12).hex() #should use security random?
+    return secrets.token_bytes(12).hex()
 
 def zeroise(key):
     key[:] = bytes(len(key))

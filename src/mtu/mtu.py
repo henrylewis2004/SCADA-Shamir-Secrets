@@ -59,8 +59,8 @@ def message_authorised(msg, host, control_port, missing_share_count, timeout=5.0
 
     try:
         auth_time = time.time()
-        with socket.create_connection((host, control_port), timeout=timeout) as s:
-            s.sendall(payload)
+        with socket.create_connection((host, control_port), timeout=timeout) as sock:
+            sock.sendall(payload)
             response = s.recv(4096)
         timeset["auth_time"] = time.time() - auth_time
 
@@ -78,8 +78,8 @@ def send_message(message, host, control_port, modbus_port, address, value, timeo
         return False, timeset
     #print(f"time to authorise message: {timeset["auth_time"]*1000} ms")
 
-    message = json.loads(message)
     end_time=time.time()
+    message = json.loads(message)
 
     match message["function"]:
         case "write_register":
@@ -93,8 +93,7 @@ def send_message(message, host, control_port, modbus_port, address, value, timeo
     return not response.isError(), timeset
 
 
-def debug_send_message_no_authorisation(message, host, control_port, modbus_port, address, value, timeout=5.0, missing_share_count=0):
-    timeset = {}
+def debug_send_message_no_authorisation(host, modbus_port, address, value, timeout=5.0, missing_share_count=0):
     end_time=time.time()
 
     client = ModbusTcpClient(host, port=modbus_port, timeout=timeout)
@@ -104,14 +103,15 @@ def debug_send_message_no_authorisation(message, host, control_port, modbus_port
     #print(f"mtu send message response: {response}, time to send: {end_time*1000} ms",flush=True)
     client.close()
 
-    timeset["send_message"] =time.time() - end_time
-    return not response.isError(), timeset
+    return not response.isError(), time.time() - end_time
 
 def write_register(host, modbus_port, address, value,timeout=5.0):
     client = ModbusTcpClient(host, port=modbus_port, timeout=timeout)
     client.connect()
+
     response = client.write_register(address, value, device_id=1)
     client.close()
+
     return response
 
 def read_register_address(host, modbus_port, address, timeout=5.0):
@@ -119,14 +119,13 @@ def read_register_address(host, modbus_port, address, timeout=5.0):
     client.connect()
 
     response = client.read_holding_registers(address, count=1, device_id=1).registers
-    print(f"{host} register {address} value: {response}",flush=True)
     client.close()
 
     return response
 
 
 ##
-def test_run(trial_count=1,target=os.environ.get("TEST_TARGET")):
+def test_run(trial_count=int(os.environ.get("TRIAL_COUNT")),target=os.environ.get("TEST_TARGET")):
     print("\n\n---starting test run---\n")
 
     host = field_devices[target]["host"]
@@ -331,7 +330,7 @@ def test_run(trial_count=1,target=os.environ.get("TEST_TARGET")):
         end_time = time.time()
 
         msg,_ = make_message(target, "write_register", register_address, val,time.time())
-        ok,_ = debug_send_message_no_authorisation(msg, host, control_port, modbus_port, register_address, val)      
+        ok,_ = debug_send_message_no_authorisation(host, modbus_port, register_address, val)      
 
         end_time = time.time() - end_time
         final_value = read_register_address(host, modbus_port,register_address)
@@ -343,7 +342,40 @@ def test_run(trial_count=1,target=os.environ.get("TEST_TARGET")):
 
     evaluation.mtu_test_run(auth_time_res,trial_res,k,n)
 
+def control_test(trial_count=int(os.environ.get("TRIAL_COUNT")),target=os.environ.get("TEST_TARGET")):
+    print("\n\n---starting test run---\n")
+
+    host = field_devices[target]["host"]
+    control_port = field_devices[target]["control_port"] 
+    modbus_port = field_devices[target]["modbus_port"] 
+    register_address = 10
+
+    res = []
+    value = [1,2]
+    for i in range(0, trial_count):
+        test_name = "control_test"
+
+        initial_value = read_register_address(host, modbus_port,register_address)
+
+        val = value[False]
+        if val == initial_value[0]:
+            val = value[True]
+
+        print(f"--- 0) {test_name}: target={target} addr={register_address} value={val} ---")
+        end_time = time.time()
+
+        ok, time_send_message = debug_send_message_no_authorisation(host,modbus_port, register_address,val)
+
+        end_time = time.time() - end_time
+
+        response_value = read_register_address(host, modbus_port,register_address)
+        print(f"result: {ok}, value_change_correct: {response_value[0]==val}, time: {end_time*1000} ms\n",flush=True)
+
+        res.append({"correct_result": ok==True, "value_change_correct":response_value[0]==val ,"time": end_time, "time_send_message":time_send_message})
+
+    evaluation.control_test_run(res)
 
 if __name__ == "__main__":
-    test_run(int(os.environ.get("TRIAL_COUNT")))
+    test_run()
+    #control_test() #control test for instruction without authorisation gate
 
