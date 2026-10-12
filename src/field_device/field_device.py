@@ -47,7 +47,9 @@ def authorise(msg_str, sig_hex):
     payload = json.loads(msg_str)
     address, value, nonce, ts, target = payload["address"], payload["value"], payload["nonce"], payload["ts"], payload["target"]
 
-    if target != node_name: return False
+    if target != node_name: 
+        print("Not authorised, mismatched target name",flush=True)
+        return False
 
     key = None
     try:
@@ -63,11 +65,14 @@ def authorise(msg_str, sig_hex):
             crypt.zeroise(key)
 
     if not ok:
+        print(f"Not authorised, failed CMAC verification",flush=True)
         return False
 
     with lock:
         nonce_auth_age_check()
-        if not fresh_check(nonce,ts): return False
+        if not fresh_check(nonce,ts): 
+            print(f"Not authorised, old or previous nonce",flush=True)
+            return False
 
         seen_nonces[nonce] = time.time()+max_nonce_life
 
@@ -78,7 +83,7 @@ def authorise(msg_str, sig_hex):
                 pass #read register is always allowed through gate_action for debug purposes
     
     time_authorise = time.time() - time_authorise
-    print(f"time to authorise: {time_authorise*1000} ms", flush=True)
+    print(f"time to authorise: {time_authorise*1000} ms\n", flush=True)
     return True
 
 def serve_one(connection):
@@ -134,7 +139,7 @@ async def gate_action(function_code, start_address, address, count, current_regi
 def start_modbus_server(addr, port):
     register_block = SimData(0, count=100, values=0, datatype=DataType.REGISTERS)
     device = SimDevice(id=1, simdata=[register_block], action=gate_action)
-    #device = SimDevice(id=1, simdata=[hr_block]) #control test with no authorisation gate 
+    #device = SimDevice(id=1, simdata=[register_block]) #control test with no authorisation gate 
 
     print(f"Modbus TCP server listening on :{port}",flush=True)
     StartTcpServer(context=device, address=(addr, port))

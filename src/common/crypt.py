@@ -50,7 +50,7 @@ def collect_shares(shareholders, k, timeout=2.0):
 
 #get secret
 def recover_key(shares):        
-    return recover_secret(shares).to_bytes(32, "big")
+    return recover_secret(shares).to_bytes(16, "big")
 
 #message
 def message(target, function, address, value, nonce, ts, encode=True):

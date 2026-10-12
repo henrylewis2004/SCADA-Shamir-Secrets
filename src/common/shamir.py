@@ -1,7 +1,7 @@
 # Shamir Secret Sharing - splits a secrete and creates shares to reconstruct secret
 import secrets
 
-PRIME = 2**256 - 1  #256 bit mersenne prime
+PRIME = 2**521 - 1  #521 bit mersenne prime
 
 #creates a set of random coefficients in the form (secret + ci*X ... + cn*X^k-1)
 def create_coeffs(secret_int, k, prime=PRIME):
@@ -59,5 +59,3 @@ def test():
     print(f"secret: {secret}\n")
     print(f"recovered secret: {rec}")
 
-
-test()
