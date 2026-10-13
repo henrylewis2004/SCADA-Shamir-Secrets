@@ -3,10 +3,10 @@ import nodes
 
 import yaml
 
-#k,n = (3,5), (3,9), (5,9), (3,19), (5,19), (10,19), (3,30), (5,30), (10,30), (15,30)
+#k,n = (3,5), (3,9), (5,9), (3,19), (5,19), (10,19), (3,30), (5,30), (10,30), (12,30), (15,30)
 
 N_COUNT = 30
-K_THRESHOLD = 3
+K_THRESHOLD = 12
 SHAREHOLDER_PORT = 7000
 SHAREHOLDER_IP = "0.0.0.0"
 
@@ -28,7 +28,7 @@ FIELD_DEVICES_MODBUS_PORT = 5020
 MTU_COUNT = 1
 FIELD_DEVICE_COUNT = 3
 
-EVAL_TRIAL_COUNT = 30
+EVAL_TRIAL_COUNT = 1
 
 def mtu_dependencies(count):
     dep = []

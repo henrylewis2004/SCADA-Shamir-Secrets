@@ -1,0 +1,3 @@
+--- control timing results ---
+cnt,avg_time,avg_send_msg_time,first_time,correct_authorised_rate_%,correct_register_value_change_%
+29,0.7540604163860453,0.7517831078891096,0.6356239318847656,1.0,1.0

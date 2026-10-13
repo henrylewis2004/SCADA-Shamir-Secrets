@@ -48,7 +48,7 @@ def authorise(msg_str, sig_hex):
     address, value, nonce, ts, target = payload["address"], payload["value"], payload["nonce"], payload["ts"], payload["target"]
 
     if target != node_name: 
-        print("Not authorised, mismatched target name",flush=True)
+        print("Not authorised, mismatched target name\n",flush=True)
         return False
 
     key = None
@@ -58,20 +58,20 @@ def authorise(msg_str, sig_hex):
         ok = crypt.verify(bytes(key), msg_str.encode(), sig_hex)
 
     except Exception as e:
-        print(f"send command hex generation failure, exception: {e}")
+        print(f"send command hex generation failure, exception: {e}",flush=True)
 
     finally:
         if key is not None:
             crypt.zeroise(key)
 
     if not ok:
-        print(f"Not authorised, failed CMAC verification",flush=True)
+        print(f"Not authorised, failed CMAC verification\n",flush=True)
         return False
 
     with lock:
         nonce_auth_age_check()
         if not fresh_check(nonce,ts): 
-            print(f"Not authorised, old or previous nonce",flush=True)
+            print(f"Not authorised, old or previous nonce\n",flush=True)
             return False
 
         seen_nonces[nonce] = time.time()+max_nonce_life
@@ -97,12 +97,12 @@ def serve_one(connection):
                     break
                 data += chunk
             except Exception as e:
-                print("control channel data connection timeout error:", e)
+                print(f"control channel data connection timeout error: {e}", flush=True)
         try:
             payload = json.loads(data.decode())
             ok = authorise(payload["msg"], payload["sig"])
         except Exception as e:
-            print("control channel error:", e)
+            print(f"control channel error: {e}",flush=True)
             ok = False
         connection.sendall(b"AUTHORIZED" if ok else b"DENIED")
 
