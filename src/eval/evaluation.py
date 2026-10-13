@@ -218,13 +218,13 @@ def export_control_csv(control_res,name, output_dir="/app/eval/"):
 def mtu_test_run(authorise_timeset,evaluation_results,k,n):
     authorise = mtu_authorise_time(authorise_timeset)
     evaluation = mtu_test_evaluation_results(evaluation_results)
-    #export_csv(authorise,evaluation,k,n,f"mtu_eval_(k,n)=({k},{n}).csv")
+    export_csv(authorise,evaluation,k,n,f"mtu_eval_(k,n)=({k},{n}).csv")
 
     #excluding first
     if len(authorise_timeset) > 1 and len(evaluation_results) > 1:
         authorise=mtu_authorise_time(authorise_timeset,exclude_first=True)
         evaluation=mtu_test_evaluation_results(evaluation_results,exclude_first=True)
-        #export_csv(authorise,evaluation,k,n,f"mtu_eval_(k,n)=({k},{n}).csv","/app/eval/exclude_first")
+        export_csv(authorise,evaluation,k,n,f"mtu_eval_(k,n)=({k},{n}).csv","/app/eval/exclude_first")
 
 def control_test_run(res,):
     results = control_results(res)

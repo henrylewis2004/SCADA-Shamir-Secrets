@@ -57,5 +57,17 @@ def test():
 
     print(f"n: {n}\nk:{k}")
     print(f"secret: {secret}\n")
-    print(f"recovered secret: {rec}")
+    print(f"recovered secret with k genuine shares: {rec}")
+    print(f"authorised={secret==rec}\n")
 
+    rec=recover_secret(shares[:k-1])
+    print(f"recovered secret with k-1 shares: {rec}")
+    print(f"authorised={secret==rec}\n")
+
+    shares = [(1,123),(2,456),(3,789)]
+    rec=recover_secret(shares[:k])
+    print(f"recovered secret with k fake shares: {rec}")
+    print(f"authorised={secret==rec}\n")
+
+
+test()
