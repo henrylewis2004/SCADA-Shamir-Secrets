@@ -1,5 +1,5 @@
-# NOTE:
-
+# NOTE: example test run with a trial count of only 1 (as opposed to the 30 used for real examinations)
+# NOTE: ran with (k,n) values of (12,30)
 
 # MTU
 mtu_1-1  | 
