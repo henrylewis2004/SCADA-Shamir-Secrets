@@ -28,7 +28,7 @@ FIELD_DEVICES_MODBUS_PORT = 5020
 MTU_COUNT = 1
 FIELD_DEVICE_COUNT = 3
 
-EVAL_TRIAL_COUNT = 1
+EVAL_TRIAL_COUNT = 30
 
 def mtu_dependencies(count):
     dep = []
