@@ -1,5 +1,6 @@
 import csv
 import os
+import statistics
 
 def mtu_authorise_time(authorise_timeset,exclude_first=False):
     if exclude_first:
@@ -9,34 +10,49 @@ def mtu_authorise_time(authorise_timeset,exclude_first=False):
     timeset={ 
         "make_message" : 0,
         "total_auth_time": 0,
-        "auth_time": 0,
-        "zeroise_time": 0,
         "share_collect_time" : 0,
         "key_construction" : 0,
         "message_signature_time" : 0,
+        "zeroise_time": 0,
+        "auth_time": 0,
         "share_cost" : 0,
         "send_message" : 0,
-        "total_time": 0
+        "total_time": 0,
+        "min": 0,
+        "max": 0,
+        "dev":0,
+        "median":0,
              }
 
+    first_time=None
+    timeseries = []
     for trial in authorise_timeset[exclude_first==True:]:
-        timeset["make_message"] += trial.get("make_message",0)
+        timeset["make_message"] += trial["make_message"]
 
         cost = trial["send_message_set"]
-        timeset["auth_time"] += cost.get("auth_time",0)
-        timeset["zeroise_time"] += cost.get("zeroise_time",0)
-        timeset["total_auth_time"] += cost.get("total_auth_time",0)
-        timeset["share_collect_time"] += cost.get("share_collection",0)
-        timeset["key_construction"] += cost.get("key_construction",0)
-        timeset["message_signature_time"] += cost.get("message_signature_time",0)
-        timeset["share_cost"] += cost.get("share_cost_total",0)
-        timeset["send_message"] += cost.get("send_message",0)
+        timeset["auth_time"] += cost["auth_time"]
+        timeset["zeroise_time"] += cost["zeroise_time"]
+        timeset["total_auth_time"] += cost["total_auth_time"]
+        timeset["share_collect_time"] += cost["share_collection"]
+        timeset["key_construction"] += cost["key_construction"]
+        timeset["message_signature_time"] += cost["message_signature_time"]
+        timeset["share_cost"] += cost["share_cost_total"]
+        timeset["send_message"] += cost["send_message"]
 
-        timeset["total_time"] += trial.get("total_time",0)
+        timeset["total_time"] += trial["total_time"]
+        if first_time is None: first_time = timeset["total_time"] * 1000
+        timeseries.append(trial["total_time"] * 1000)
     
     cnt = len(authorise_timeset) - int(exclude_first==True)
     for cost in timeset:
         timeset[cost] = (timeset[cost] / cnt) * 1000
+
+    
+    if exclude_first== False:
+        timeset["first_time"] = first_time
+        print(f"first trial time cost: {first_time} ms")
+
+    timeset["min"], timeset["max"],timeset["dev"],timeset["median"] = get_stat_values(timeseries,exclude_first)
 
     print(f"avg time to make message: {timeset["make_message"]} ms")
     print(f"avg time to send_message: {timeset["send_message"]} ms")
@@ -47,8 +63,19 @@ def mtu_authorise_time(authorise_timeset,exclude_first=False):
     print(f" --- avg time to zeroise key: {timeset["zeroise_time"]} ms")
     print(f" --- avg time to connect authorisation: {timeset["auth_time"]} ms")
     print(f"avg total time: {timeset["total_time"]} ms\n")
+    print(f"lowest time: {timeset["min"]} ms, ")
+    print(f"highest time: {timeset["max"]} ms, ")
+    print(f"deviation: {timeset["dev"]}, ")
 
     return timeset
+
+def get_stat_values(timeseries,exclude_first=False):
+    times = sorted(timeseries[exclude_first:])
+    dev = statistics.stdev(times) if len(times) > 1 else 0.0
+    median = statistics.median(times)
+    
+    return times[0],times[max(0,len(times)-1)],dev,median
+
 
 def mtu_test_evaluation_results(timeset,exclude_first=False):
     if exclude_first:
@@ -61,18 +88,31 @@ def mtu_test_evaluation_results(timeset,exclude_first=False):
         correct_authorised_rate = 0
         register_value_change_rate = 0
 
+        timeseries = []
         for trial in timeset[res][exclude_first==True:]:
-            avg_time += trial.get("time",0)
-            correct_authorised_rate += trial.get("correct_result",False)==True
-            register_value_change_rate += trial.get("value_change_correct",False)==True
+            avg_time += trial["time"]
+            timeseries.append(trial["time"]*1000)
+            correct_authorised_rate += trial["correct_result"]==True
+            register_value_change_rate += trial["value_change_correct"]==True
 
         cnt = len(timeset[res]) - int(exclude_first==True)
         avg_time = avg_time/cnt * 1000
         correct_authorised_rate = correct_authorised_rate/cnt
         register_value_change_rate = register_value_change_rate/cnt
 
-        print(f"{res} (cnt: {cnt}): avg_time={avg_time} ms, correct_authorised_rate={correct_authorised_rate*100}%, correct_register_value_change={register_value_change_rate*100}%",flush=True)
-        results[res] = {"cnt": cnt, "avg_time": avg_time, "correct_authorised_rate": correct_authorised_rate, "correct_register_value_change": register_value_change_rate}
+        min,max,dev,median = get_stat_values(timeseries,exclude_first)
+
+        print(f"{res} (cnt: {cnt}): avg_time={avg_time} ms, min_time={min} ms, max_time={max} ms, median_time={median} ms, deviation={dev},correct_authorised_rate={correct_authorised_rate*100}%, correct_register_value_change={register_value_change_rate*100}%",flush=True)
+        results[res] = {
+                "cnt": cnt,
+                "avg_time": avg_time,
+                "min_time": min,
+                "max_time": max,
+                "median_time": median,
+                "deviation": dev,
+                "correct_authorised_rate": correct_authorised_rate,
+                "correct_register_value_change": register_value_change_rate
+                }
 
     print()
     return results
@@ -88,23 +128,42 @@ def control_results(res,exclude_first=False):
     correct_authorised_rate = 0
     register_value_change_rate = 0
 
+    first_time = None
+    timeseries = []
     for trial in res[exclude_first==True:]:
-        avg_time += trial.get("time",0)
-        avg_send_msg_time = trial.get("time_send_message",0)
-        correct_authorised_rate += trial.get("correct_result",False)==True
-        register_value_change_rate += trial.get("value_change_correct",False)==True
+        avg_time += trial["time"]
+        if first_time is None: first_time = avg_time
+        timeseries.append(trial["time"] *1000)
+
+        avg_send_msg_time += trial["time_send_message"]
+        correct_authorised_rate += trial["correct_result"]==True
+        register_value_change_rate += trial["value_change_correct"]==True
 
 
     cnt = len(res) - int(exclude_first==True)
 
     avg_time = avg_time/cnt * 1000
     avg_send_msg_time = avg_send_msg_time/cnt * 1000
+    first_time = first_time * 1000
     correct_authorised_rate = correct_authorised_rate/cnt 
     register_value_change_rate = register_value_change_rate/cnt
 
-    print(f"(cnt: {cnt}): avg_time={avg_time} ms, avg_send_msg_time={avg_send_msg_time} ms, correct_authorised_rate={correct_authorised_rate*100}%, correct_register_value_change={register_value_change_rate*100}%",flush=True)
+    max, min, dev, median = get_stat_values(timeseries,exclude_first)
 
-    results = {"cnt": cnt, "avg_time": avg_time, "avg_send_msg_time": avg_send_msg_time,"correct_authorised_rate": correct_authorised_rate, "correct_register_value_change": register_value_change_rate}
+    print(f"(cnt: {cnt}): avg_time={avg_time} ms, avg_send_msg_time={avg_send_msg_time} ms, min_time={min} ms, max_time={max} ms, median_time={median} ms, deviation={dev}, correct_authorised_rate={correct_authorised_rate*100}%, correct_register_value_change={register_value_change_rate*100}%",flush=True)
+
+    results = {
+            "cnt": cnt,
+            "avg_time": avg_time,
+            "avg_send_msg_time": avg_send_msg_time,
+            "min_time": min,
+            "max_time": max,
+            "median_time": median,
+            "deviation": dev,
+            "first_time": first_time,
+            "correct_authorised_rate": correct_authorised_rate,
+            "correct_register_value_change": register_value_change_rate
+            }
 
     print()
     return results
@@ -118,7 +177,7 @@ def export_csv(stage_avgs, results_summary,k,n,name, output_dir="/app/eval/"):
         writer.writerow([f"--- stage timing averages (ms) (k,n)=({k},{n}) ---"])
         writer.writerow(["stage", "avg_ms"])
         for stage, val in stage_avgs.items():
-            writer.writerow([stage, val * 1000])
+            writer.writerow([stage, val])
 
         writer.writerow([])
         writer.writerow([f"--- scenario results (k,n)=({k},{n})---"])
@@ -135,9 +194,9 @@ def export_control_csv(control_res,name, output_dir="/app/eval/"):
     with open(filename, "w", newline="") as f:
         writer = csv.writer(f)
         writer.writerow([f"--- control timing results ---"])
-        writer.writerow(["cnt", "avg_time" ,"avg_send_msg_time","correct_authorised_rate_%", "correct_register_value_change_%"])
+        writer.writerow(["cnt", "avg_time" ,"avg_send_msg_time", "first_time","correct_authorised_rate_%", "correct_register_value_change_%"])
         print(f"control_res: {control_res}", flush=True)
-        writer.writerow([control_res["cnt"],control_res["avg_time"],control_res["avg_send_msg_time"],control_res["correct_authorised_rate"],control_res["correct_register_value_change"]])
+        writer.writerow([control_res["cnt"],control_res["avg_time"],control_res["avg_send_msg_time"],control_res["first_time"],control_res["correct_authorised_rate"],control_res["correct_register_value_change"]])
 
     print(f"wrote {filename}")
 

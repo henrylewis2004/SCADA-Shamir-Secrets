@@ -46,7 +46,7 @@ def message_authorised(msg, host, control_port, missing_share_count, timeout=5.0
         timeset["share_cost_total"] = time.time() - share_time    
 
     except Exception as e:
-        print(f"authorise key & hex generation failure, exception: {e}")
+        print(f"authorise key & hex generation failure, exception: {e}, timeset={timeset}")
         return False, timeset
 
     finally:
@@ -165,24 +165,15 @@ def test_run(trial_count=int(os.environ.get("TRIAL_COUNT")),target=os.environ.ge
 
         time_cost["total_time"] = end_time 
 
-#        print(f"time to make message: {time_cost.get("make_message",0)*1000} ms")
-#        print(f"time to send_message: {time_cost["send_message_set"].get("send_message",0)*1000} ms")
-#        print(f"time to authorise message: {time_cost["send_message_set"].get("total_auth_time",0)*1000} ms")
-#        print(f" --- time to collect shares: {time_cost["send_message_set"].get("share_collection",0)*1000} ms")
-#        print(f" --- time to construct key: {time_cost["send_message_set"].get("key_construction",0)*1000} ms")
-#        print(f" --- time to sign message: {time_cost["send_message_set"].get("message_signature_time",0)*1000} ms")
-#        print(f" --- time to zeroise key: {time_cost["send_message_set"].get("zeroise_time",0)*1000} ms")
-#        print(f" --- time to connect authorisation: {time_cost["send_message_set"].get("auth_time",0)*1000} ms")
-#        print(f"total time: {time_cost.get("total_time",0)*1000} ms\n")
-        print(f"time to make message: {time_cost.get("make_message",0)*1000} ms")
-        print(f"time to send_message: {time_cost["send_message_set"].get("send_message",0)*1000} ms")
-        print(f"time to authorise message: {time_cost["send_message_set"].get("total_auth_time",0)*1000} ms")
-        print(f" --- time to collect shares: {time_cost["send_message_set"].get("share_collection",0)*1000} ms")
-        print(f" --- time to construct key: {time_cost["send_message_set"].get("key_construction",0)*1000} ms")
-        print(f" --- time to sign message: {time_cost["send_message_set"].get("message_signature_time",0)*1000} ms")
-        print(f" --- time to zeroise key: {time_cost["send_message_set"].get("zeroise_time",0)*1000} ms")
-        print(f" --- time to connect authorisation: {time_cost["send_message_set"].get("auth_time",0)*1000} ms")
-        print(f"total time: {time_cost.get("total_time",0)*1000} ms\n")
+        print(f"time to make message: {time_cost["make_message"]*1000} ms")
+        print(f"time to send_message: {time_cost["send_message_set"]["send_message"]*1000} ms")
+        print(f"time to authorise message: {time_cost["send_message_set"]["total_auth_time"]*1000} ms")
+        print(f" --- time to collect shares: {time_cost["send_message_set"]["share_collection"]*1000} ms")
+        print(f" --- time to construct key: {time_cost["send_message_set"]["key_construction"]*1000} ms")
+        print(f" --- time to sign message: {time_cost["send_message_set"]["message_signature_time"]*1000} ms")
+        print(f" --- time to zeroise key: {time_cost["send_message_set"]["zeroise_time"]*1000} ms")
+        print(f" --- time to connect authorisation: {time_cost["send_message_set"]["auth_time"]*1000} ms")
+        print(f"total time: {time_cost["total_time"]*1000} ms\n")
 
         auth_time_res.append(time_cost)
         res.append({"correct_result": ok==True, "value_change_correct":response_value[0]==val ,"time": end_time})
@@ -387,5 +378,5 @@ def control_test(trial_count=int(os.environ.get("TRIAL_COUNT")),target=os.enviro
 
 if __name__ == "__main__":
     test_run()
-    #control_test() #control test for instruction without authorisation gate
+    #control_test() #control test for instruction without authorisation or gate
 

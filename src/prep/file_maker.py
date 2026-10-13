@@ -3,9 +3,9 @@ import nodes
 
 import yaml
 
-#n,k = (3,5), (3,9), (5,9), (3,19), (10,19), (3,30), (5,30), (10,30), (15,30)
+#k,n = (3,5), (3,9), (5,9), (3,19), (5,19), (10,19), (3,30), (5,30), (10,30), (15,30)
 
-N_COUNT = 5
+N_COUNT = 30
 K_THRESHOLD = 3
 SHAREHOLDER_PORT = 7000
 SHAREHOLDER_IP = "0.0.0.0"
@@ -27,6 +27,8 @@ FIELD_DEVICES_MODBUS_PORT = 5020
 
 MTU_COUNT = 1
 FIELD_DEVICE_COUNT = 3
+
+EVAL_TRIAL_COUNT = 30
 
 def mtu_dependencies(count):
     dep = []
@@ -65,7 +67,7 @@ def make_docker_compose(mtu_count=MTU_COUNT, field_device_count=FIELD_DEVICE_COU
                     "FIELD_DEVICE_COUNT": FIELD_DEVICE_COUNT,
                     ##test variables
                     "TEST_TARGET": "field_device_1",
-                    "TRIAL_COUNT": "10"
+                    "TRIAL_COUNT": EVAL_TRIAL_COUNT
                     },
                 "volumes": [f"{real_node_list_path}:{NODE_LIST_PATH}:ro",f"{real_device_list_path}:{FIELD_DEVICE_LIST_PATH}:ro",f"{REAL_EVAL_DIR}:{CONTAINER_EVAL_DIR}"],
                 "networks": ["SCADA-system"],

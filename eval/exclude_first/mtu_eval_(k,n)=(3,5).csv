@@ -1,0 +1,26 @@
+"--- stage timing averages (ms) (k,n)=(3,5) ---"
+stage,avg_ms
+make_message,0.028371810913085938
+total_auth_time,0.8111164487641433
+share_collect_time,0.001397626153353987
+key_construction,0.02035601385708513
+message_signature_time,0.1466849754596579
+zeroise_time,0.001866241981243265
+auth_time,0.6274765935437433
+share_cost,0.16948272441995554
+send_message,0.6439521394926926
+total_time,1.492089238660089
+min,1.0406970977783203
+max,1.9733905792236328
+dev,0.16940015531468736
+median,1.4867782592773438
+
+"--- scenario results (k,n)=(3,5)---"
+scenario,count,avg_time_ms,correct_authorised_rate_%,register_value_change_rate_%
+legitimate_command,29,1.492089238660089,1.0,1.0
+replay_message,29,0.8358955383300781,1.0,1.0
+wrong_target,29,0.6134345613676926,1.0,1.0
+mismatched_values,29,1.5025796561405578,1.0,1.0
+outdated_ts,29,0.944754173015726,1.0,1.0
+missing_shares,29,0.13662206715550917,1.0,1.0
+authorisation_skip,29,0.5904066151586073,1.0,1.0

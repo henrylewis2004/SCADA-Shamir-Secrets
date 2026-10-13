@@ -19,12 +19,10 @@ def fetch_share(url, token, timeout=2.0):
         data = json.loads(response.read().decode())
         return (data["x"], data["y"])
 
-def collect_shares(shareholders, k, timeout=2.0):
-    # shareholders: list of [(url, token)]
-    if not shareholders:
-        raise ValueError("collect_shares: no shareholders provided")
-    if len(shareholders) < k:
-        raise ValueError(f"collect_shares: need {k} shareholders, got {len(shareholders)}")
+def fetch_batch_shares(shareholders,cnt,timeout=2.0):
+    if cnt < 1:
+        print("Error: invalid fetch number of shares, must request atleast one share",flush=True)
+        return
 
     shares = []
     with ThreadPoolExecutor(max_workers=len(shareholders)) as pool:
@@ -37,20 +35,34 @@ def collect_shares(shareholders, k, timeout=2.0):
             try:
                 shares.append(future.result())
             except Exception as e:
-                print(f"collect_shares shareholder exception: {e}")
+                print(f"fetch_batch_shares shareholder exception: {e}")
                 continue  # shareholder failed/timed out 
-            if len(shares) >= k:
+            if len(shares) >= cnt:
                 break
 
-    if len(shares) < k:
+    return shares
+
+def collect_shares(shareholders, k, seen=0, shares=[], timeout=2.0):
+    # shareholders: list of [(url, token)]
+    if len(shares) >= k:
+        return shares[:k]
+
+    if not shareholders:
+        raise ValueError("collect_shares: no shareholders provided")
+    if len(shareholders) < k:
+        raise ValueError(f"collect_shares: need {k} shareholders, got {len(shareholders)}")
+
+    shares += fetch_batch_shares(shareholders[seen:k+seen],k-len(shares))
+
+    if len(shares) < k and len(shares) > len(shareholders): 
         raise Exception(f"only got {len(shares)}/{k} shares")
 
-    return shares[:k]
+    return collect_shares(shareholders,k,k+seen,shares)
 
 
 #get secret
 def recover_key(shares):        
-    return recover_secret(shares).to_bytes(16, "big")
+    return recover_secret(shares).to_bytes(32, "big")
 
 #message
 def message(target, function, address, value, nonce, ts, encode=True):
