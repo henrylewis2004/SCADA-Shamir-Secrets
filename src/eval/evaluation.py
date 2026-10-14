@@ -67,6 +67,7 @@ def mtu_authorise_time(authorise_timeset,exclude_first=False):
     print(f"lowest time: {timeset["min"]} ms, ")
     print(f"highest time: {timeset["max"]} ms, ")
     print(f"deviation: {timeset["dev"]}, ")
+    print(f"median: {timeset["median"]}, ")
 
     return timeset
 

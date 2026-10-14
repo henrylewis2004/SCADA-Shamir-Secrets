@@ -78,11 +78,11 @@ def zeroise(key):
     key[:] = bytes(len(key))
 
 #CMAC (Cipher-based Message Authentication Code) sign and verify messages
-def sign(key: bytes, message: bytes) -> str:
+def sign(key: bytes, message: bytes):# -> str:
     msg_cmac = CMAC.new(key,message,AES) 
     return msg_cmac.hexdigest()
 
-def verify(key: bytes, message: bytes, tag_hex: str) -> bool:
+def verify(key: bytes, message: bytes, tag_hex: str):# -> bool:
     msg_cmac = CMAC.new(key,message,AES) 
     try:
         msg_cmac.hexverify(tag_hex)
